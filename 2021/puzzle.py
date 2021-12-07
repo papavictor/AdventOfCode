@@ -359,6 +359,50 @@ def puzzle_6_2():
         fish = next_fish
     return sum(fish.values())
 
+def puzzle_7_1():
+    with open("7.txt") as fp:
+        data = list(map(int, fp.read().strip().split(",")))
+    minpos = data[0]
+    maxpos = data[0]
+    for line in data:
+        if line > maxpos:
+            maxpos = line
+        if line < minpos:
+            minpos = line
+    min_sum = 0
+    for c in range(minpos, maxpos+1):
+        sumc = 0
+        for d in data:
+            sumc += abs(d - c)
+        if not min_sum or sumc < min_sum:
+            min_sum = sumc
+    return min_sum
+
+def puzzle_7_2():
+    with open("7.txt") as fp:
+        data = list(map(int, fp.read().strip().split(",")))
+    minpos = data[0]
+    maxpos = data[0]
+    for line in data:
+        if line > maxpos:
+            maxpos = line
+        if line < minpos:
+            minpos = line
+    min_sum = 0
+    def _sum_torial(i):
+        sumt = i
+        for x in range(0, i):
+            sumt += x
+        return sumt
+    for c in range(minpos, maxpos+1):
+        sumc = 0
+        for d in data:
+            sumc += _sum_torial(abs(d - c))
+        if not min_sum or sumc < min_sum:
+            min_sum = sumc
+    return min_sum
+
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -372,6 +416,8 @@ def main():
     print("Day 5 Puzzle 2:", puzzle_5_2())
     print("Day 6 Puzzle 1:", puzzle_6_1())
     print("Day 6 Puzzle 2:", puzzle_6_2())
+    print("Day 7 Puzzle 1:", puzzle_7_1())
+    print("Day 7 Puzzle 2:", puzzle_7_2())
 
 if __name__ == '__main__':
     main()

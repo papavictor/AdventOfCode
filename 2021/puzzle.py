@@ -403,7 +403,7 @@ def puzzle_7_2():
     return min_sum
 
 def puzzle_8_1():
-    with open("8.ms.txt") as fp:
+    with open("8.txt") as fp:
         data = fp.read().strip().splitlines()
     count = 0
     for line in data:
@@ -414,7 +414,7 @@ def puzzle_8_1():
     return count
 
 def puzzle_8_2():
-    with open("8.ms.txt") as fp:
+    with open("8.txt") as fp:
         data = fp.read().strip().splitlines()
     #data = ["acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"]
     sum_d = 0
@@ -469,20 +469,20 @@ def puzzle_8_2():
         
 
 def main():
-    #print("Day 1 Puzzle 1:", puzzle_1_1())
-    #print("Day 1 Puzzle 2:", puzzle_1_2())
-    #print("Day 2 Puzzle 1:", puzzle_2_1())
-    #print("Day 2 Puzzle 2:", puzzle_2_2())
-    #print("Day 3 Puzzle 1:", puzzle_3_1())
-    #print("Day 3 Puzzle 2:", puzzle_3_2())
-    #print("Day 4 Puzzle 1:", puzzle_4_1())
-    #print("Day 4 Puzzle 2:", puzzle_4_2())
-    #print("Day 5 Puzzle 1:", puzzle_5_1())
-    #print("Day 5 Puzzle 2:", puzzle_5_2())
-    #print("Day 6 Puzzle 1:", puzzle_6_1())
-    #print("Day 6 Puzzle 2:", puzzle_6_2())
-    #print("Day 7 Puzzle 1:", puzzle_7_1())
-    #print("Day 7 Puzzle 2:", puzzle_7_2())
+    print("Day 1 Puzzle 1:", puzzle_1_1())
+    print("Day 1 Puzzle 2:", puzzle_1_2())
+    print("Day 2 Puzzle 1:", puzzle_2_1())
+    print("Day 2 Puzzle 2:", puzzle_2_2())
+    print("Day 3 Puzzle 1:", puzzle_3_1())
+    print("Day 3 Puzzle 2:", puzzle_3_2())
+    print("Day 4 Puzzle 1:", puzzle_4_1())
+    print("Day 4 Puzzle 2:", puzzle_4_2())
+    print("Day 5 Puzzle 1:", puzzle_5_1())
+    print("Day 5 Puzzle 2:", puzzle_5_2())
+    print("Day 6 Puzzle 1:", puzzle_6_1())
+    print("Day 6 Puzzle 2:", puzzle_6_2())
+    print("Day 7 Puzzle 1:", puzzle_7_1())
+    print("Day 7 Puzzle 2:", puzzle_7_2())
     print("Day 8 Puzzle 1:", puzzle_8_1())
     print("Day 8 Puzzle 2:", puzzle_8_2())
 

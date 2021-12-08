@@ -419,7 +419,6 @@ def puzzle_8_2():
     #data = ["acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"]
     sum_d = 0
     for line in data:
-        positions = {0:False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
         segments = {0:False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False, 7:False, 8:False, 9:False}
         (sig_pat, output_val) = line.split(" | ")
         len_fives = []
@@ -451,14 +450,6 @@ def puzzle_8_2():
                 segments[6] = word
             else:
                 segments[0] = word
-        positions[0] = list(set(list(segments[7])) - set(list(segments[1])))[0]
-        positions[1] = list(set(list(segments[4])) - set(list(segments[3])))[0]
-        positions[2] = list(set(list(segments[9])) - set(list(segments[5])))[0]
-        positions[3] = list(set(list(segments[8])) - set(list(segments[6])))[0]
-        positions[4] = list(set(list(segments[8])) - set(list(segments[9])))[0]
-        positions[5] = list(set(list(segments[6])) - set(list(segments[5])))[0]
-        positions[6] = list(set(list(segments[1])) - set(list(segments[2])))[0]
-        positions[7] = list(set(list(segments[3])) - set(list(segments[7])) - set(list(segments[4])))[0]
         val = ""
         for word in output_val.split():
              for k,v in segments.items():

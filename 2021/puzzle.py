@@ -402,22 +402,89 @@ def puzzle_7_2():
             min_sum = sumc
     return min_sum
 
+def puzzle_8_1():
+    with open("8.ms.txt") as fp:
+        data = fp.read().strip().splitlines()
+    count = 0
+    for line in data:
+        (sig_pat, output_val) = line.split(" | ")
+        for word in output_val.split():
+            if len(word) in [2, 3, 4, 7]:
+                count += 1
+    return count
+
+def puzzle_8_2():
+    with open("8.ms.txt") as fp:
+        data = fp.read().strip().splitlines()
+    #data = ["acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"]
+    sum_d = 0
+    for line in data:
+        positions = {0:False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False}
+        segments = {0:False, 1:False, 2:False, 3:False, 4:False, 5:False, 6:False, 7:False, 8:False, 9:False}
+        (sig_pat, output_val) = line.split(" | ")
+        len_fives = []
+        len_sixes = []
+        for word in sig_pat.split():
+            if len(word) == 2:
+                segments[1] = word
+            elif len(word) == 3:
+                segments[7] = word
+            elif len(word) == 4:
+                segments[4] = word
+            elif len(word) == 7:
+                segments[8] = word
+            elif len(word) == 5:
+                len_fives += [word]
+            elif len(word) == 6:
+                len_sixes += [word]
+        for word in len_fives:
+            if len(list(set(list(word)) - set(list(segments[1])))) == 3:
+                segments[3] = word
+            elif len(list(set(list(word)) - set(list(segments[4])))) == 2:
+                segments[5] = word
+            elif len(list(set(list(word)) - set(list(segments[4])))) == 3:
+                segments[2] = word
+        for word in len_sixes:
+            if len(list(set(list(word)) - set(list(segments[4])))) == 2:
+                segments[9] = word
+            elif len(list(set(list(segments[5])) - set(list(word)))) == 0:
+                segments[6] = word
+            else:
+                segments[0] = word
+        positions[0] = list(set(list(segments[7])) - set(list(segments[1])))[0]
+        positions[1] = list(set(list(segments[4])) - set(list(segments[3])))[0]
+        positions[2] = list(set(list(segments[9])) - set(list(segments[5])))[0]
+        positions[3] = list(set(list(segments[8])) - set(list(segments[6])))[0]
+        positions[4] = list(set(list(segments[8])) - set(list(segments[9])))[0]
+        positions[5] = list(set(list(segments[6])) - set(list(segments[5])))[0]
+        positions[6] = list(set(list(segments[1])) - set(list(segments[2])))[0]
+        positions[7] = list(set(list(segments[3])) - set(list(segments[7])) - set(list(segments[4])))[0]
+        val = ""
+        for word in output_val.split():
+             for k,v in segments.items():
+                 if sorted(word) == sorted(v):
+                     val += str(k)
+        sum_d += int(val)
+    return sum_d
+        
 
 def main():
-    print("Day 1 Puzzle 1:", puzzle_1_1())
-    print("Day 1 Puzzle 2:", puzzle_1_2())
-    print("Day 2 Puzzle 1:", puzzle_2_1())
-    print("Day 2 Puzzle 2:", puzzle_2_2())
-    print("Day 3 Puzzle 1:", puzzle_3_1())
-    print("Day 3 Puzzle 2:", puzzle_3_2())
-    print("Day 4 Puzzle 1:", puzzle_4_1())
-    print("Day 4 Puzzle 2:", puzzle_4_2())
-    print("Day 5 Puzzle 1:", puzzle_5_1())
-    print("Day 5 Puzzle 2:", puzzle_5_2())
-    print("Day 6 Puzzle 1:", puzzle_6_1())
-    print("Day 6 Puzzle 2:", puzzle_6_2())
-    print("Day 7 Puzzle 1:", puzzle_7_1())
-    print("Day 7 Puzzle 2:", puzzle_7_2())
+    #print("Day 1 Puzzle 1:", puzzle_1_1())
+    #print("Day 1 Puzzle 2:", puzzle_1_2())
+    #print("Day 2 Puzzle 1:", puzzle_2_1())
+    #print("Day 2 Puzzle 2:", puzzle_2_2())
+    #print("Day 3 Puzzle 1:", puzzle_3_1())
+    #print("Day 3 Puzzle 2:", puzzle_3_2())
+    #print("Day 4 Puzzle 1:", puzzle_4_1())
+    #print("Day 4 Puzzle 2:", puzzle_4_2())
+    #print("Day 5 Puzzle 1:", puzzle_5_1())
+    #print("Day 5 Puzzle 2:", puzzle_5_2())
+    #print("Day 6 Puzzle 1:", puzzle_6_1())
+    #print("Day 6 Puzzle 2:", puzzle_6_2())
+    #print("Day 7 Puzzle 1:", puzzle_7_1())
+    #print("Day 7 Puzzle 2:", puzzle_7_2())
+    print("Day 8 Puzzle 1:", puzzle_8_1())
+    print("Day 8 Puzzle 2:", puzzle_8_2())
 
 if __name__ == '__main__':
     main()

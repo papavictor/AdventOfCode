@@ -438,16 +438,16 @@ def puzzle_8_2():
             elif len(word) == 6:
                 len_sixes += [word]
         for word in len_fives:
-            if len(list(set(list(word)) - set(list(segments[1])))) == 3:
+            if len(set(list(word)) - set(list(segments[1]))) == 3:
                 segments[3] = word
-            elif len(list(set(list(word)) - set(list(segments[4])))) == 2:
+            elif len(set(list(word)) - set(list(segments[4]))) == 2:
                 segments[5] = word
-            elif len(list(set(list(word)) - set(list(segments[4])))) == 3:
+            elif len(set(list(word)) - set(list(segments[4]))) == 3:
                 segments[2] = word
         for word in len_sixes:
-            if len(list(set(list(word)) - set(list(segments[4])))) == 2:
+            if len(set(list(word)) - set(list(segments[4]))) == 2:
                 segments[9] = word
-            elif len(list(set(list(segments[5])) - set(list(word)))) == 0:
+            elif len(set(list(segments[5])) - set(list(word))) == 0:
                 segments[6] = word
             else:
                 segments[0] = word

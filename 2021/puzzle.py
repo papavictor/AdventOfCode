@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from copy import deepcopy
+from functools import reduce
 
 def puzzle_1_1():
     with open("1.txt") as fp:
@@ -455,9 +456,102 @@ def puzzle_8_2():
              for k,v in segments.items():
                  if sorted(word) == sorted(v):
                      val += str(k)
+                     break
         sum_d += int(val)
     return sum_d
-        
+
+def puzzle_9_1():
+    with open("9.test.txt") as fp:
+        data = fp.read().strip().splitlines()
+    heights = []
+    for line in data:
+        heights.append(list(map(int, list(line))))
+    # helper function #
+    def _get_lower_neighbors(x, y, h):
+        nu = []
+        nd = []
+        nl = []
+        nr = []
+        lower_neighbors = []
+        if y > 0:
+            nl = heights[y-1][x]
+            if nl <= h:
+                lower_neighbors.append([x,y-1])
+        if y < len(heights) - 1:
+            nr = heights[y+1][x]
+            if nr <= h:
+                lower_neighbors.append([x,y+1])
+        if x > 0:
+            nu = heights[y][x-1]
+            if nu <= h:
+                lower_neighbors.append([x-1,y])
+        if x < len(heights[y]) - 1:
+            nd = heights[y][x+1]
+            if nd <= h:
+                lower_neighbors.append([x+1,y])
+        return lower_neighbors
+    # end helper function #
+    total_risk_level = 0
+    for y in range(len(heights)):
+        for x in range(len(heights[y])):
+            lower_neighbors = _get_lower_neighbors(x, y, heights[y][x])
+            if not lower_neighbors:
+                total_risk_level += (1 + heights[y][x])
+    return total_risk_level
+
+def puzzle_9_2():
+    with open("9.txt") as fp:
+        data = fp.read().strip().splitlines()
+    heights = []
+    for line in data:
+        heights.append(list(map(int, list(line))))
+    # helper functions #
+    def _get_lower_neighbors(x, y, h):
+        lower_neighbors = []
+        if y > 0 and heights[y-1][x] <= h:
+            lower_neighbors.append([x,y-1])
+        if y < len(heights) - 1 and heights[y+1][x] <= h:
+            lower_neighbors.append([x,y+1])
+        if x > 0 and heights[y][x-1] <= h:
+            lower_neighbors.append([x-1,y])
+        if x < len(heights[y]) - 1 and heights[y][x+1] <= h:
+            lower_neighbors.append([x+1,y])
+        return lower_neighbors
+    def _get_neighbors_lt_9(x, y):
+        neighbors = []
+        if y > 0 and heights[y-1][x] < 9:
+            neighbors.append([x,y-1])
+        if y < len(heights) - 1 and heights[y+1][x] < 9:
+            neighbors.append([x,y+1])
+        if x > 0 and heights[y][x-1] < 9:
+            neighbors.append([x-1,y])
+        if x < len(heights[y]) - 1 and heights[y][x+1] < 9:
+            neighbors.append([x+1,y])
+        return neighbors
+    # end helper functions #
+    lowest_points = []
+    for y in range(len(heights)):
+        for x in range(len(heights[y])):
+            lower_neighbors = _get_lower_neighbors(x, y, heights[y][x])
+            if not lower_neighbors:
+                lowest_points.append([x, y])
+    three_largest_basins = []
+    for point in lowest_points:
+        basin = [point]
+        unseen_neighbors = _get_neighbors_lt_9(point[0], point[1])
+        while unseen_neighbors:
+            new_nb = unseen_neighbors.pop()
+            basin.append(new_nb)
+            new_nbs = _get_neighbors_lt_9(new_nb[0], new_nb[1])
+            for nb in new_nbs:
+               if nb not in basin + unseen_neighbors:
+                   unseen_neighbors.append(nb)
+        if len(three_largest_basins) < 3:
+            three_largest_basins.append(len(basin))
+        elif len(basin) > min(three_largest_basins):
+            three_largest_basins.append(len(basin))
+            three_largest_basins.remove(min(three_largest_basins))
+    return reduce(lambda x, y: x*y, three_largest_basins)
 
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
@@ -476,6 +570,8 @@ def main():
     print("Day 7 Puzzle 2:", puzzle_7_2())
     print("Day 8 Puzzle 1:", puzzle_8_1())
     print("Day 8 Puzzle 2:", puzzle_8_2())
+    print("Day 9 Puzzle 1:", puzzle_9_1())
+    print("Day 9 Puzzle 2:", puzzle_9_2())
 
 if __name__ == '__main__':
     main()

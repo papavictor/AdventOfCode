@@ -553,6 +553,51 @@ def puzzle_9_2():
             three_largest_basins.remove(min(three_largest_basins))
     return reduce(lambda x, y: x*y, three_largest_basins)
 
+def puzzle_10_1():
+    with open("10.txt") as fp:
+        data = fp.read().strip().splitlines()
+    openers = ['{', '[', '(', '<']
+    closers = {'}': '{', ']':'[', ')':'(', '>':'<'}
+    points = {')': 3, ']': 57, '}': 1197, '>': 25137}
+    score = 0
+    for line in data:
+        stack = []
+        for c in line:
+            if c in openers:
+                stack.append(c)
+            else:
+                prev_tok = stack.pop()
+                if prev_tok != closers[c]:
+                    score += points[c]
+                    break
+    return score
+
+def puzzle_10_2():
+    with open("10.txt") as fp:
+        data = fp.read().strip().splitlines()
+    openers = {'{':'}', '[':']', '(':')', '<':'>'}
+    closers = {'}': '{', ']':'[', ')':'(', '>':'<'}
+    points = {')': 1, ']': 2, '}': 3, '>': 4}
+    scores = []
+    for line in data:
+        score = 0
+        stack = []
+        for c in line:
+            if c in openers:
+                stack.append(c)
+            else:
+                prev_tok = stack.pop()
+                if prev_tok != closers[c]:
+                    #corrupt
+                    break
+        else:
+            closing_chars = ""
+            while stack:
+                c = stack.pop()
+                score = score * 5 + points[openers[c]]
+            scores.append(score)
+    return sorted(scores)[0-(int(len(scores)/2)+1)]
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -572,6 +617,8 @@ def main():
     print("Day 8 Puzzle 2:", puzzle_8_2())
     print("Day 9 Puzzle 1:", puzzle_9_1())
     print("Day 9 Puzzle 2:", puzzle_9_2())
+    print("Day 10 Puzzle 1:", puzzle_10_1())
+    print("Day 10 Puzzle 2:", puzzle_10_2())
 
 if __name__ == '__main__':
     main()

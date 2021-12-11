@@ -598,6 +598,66 @@ def puzzle_10_2():
             scores.append(score)
     return sorted(scores)[0-(int(len(scores)/2)+1)]
 
+def puzzle_11_1():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    octopi = []
+    for line in data:
+        octopi.append(list(map(int, line)))
+    sum_flashed = 0
+    for step in range(100):
+        for y in range(len(octopi)):
+            for x in range(len(octopi[y])):
+                octopi[y][x] += 1
+        flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
+        num_flashed = 0
+        flashed = []
+        while(flash_count):
+            for y in range(len(octopi)):
+                for x in range(len(octopi[y])):
+                    if octopi[y][x] > 9:
+                        flashed.append((x,y))
+                        num_flashed += 1
+                        octopi[y][x] = 0
+                        for y2 in range(y-1, y+2):
+                            for x2 in range(x-1, x+2):
+                                if 0 <= y2 < len(octopi) and 0 <= x2 < len(octopi[y2]) and (x2, y2) not in flashed:
+                                    octopi[y2][x2] += 1
+            flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
+        sum_flashed += num_flashed
+    return sum_flashed
+
+def puzzle_11_2():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    octopi = []
+    for line in data:
+        octopi.append(list(map(int, line)))
+    num_flashed = 0
+    step = 0
+    while num_flashed != 100:
+        step += 1
+        for y in range(len(octopi)):
+            for x in range(len(octopi[y])):
+                octopi[y][x] += 1
+        flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
+        num_flashed = 0
+        flashed = []
+        while(flash_count):
+            for y in range(len(octopi)):
+                for x in range(len(octopi[y])):
+                    if octopi[y][x] > 9:
+                        flashed.append((x,y))
+                        num_flashed += 1
+                        octopi[y][x] = 0
+                        for y2 in range(y-1, y+2):
+                            for x2 in range(x-1, x+2):
+                                if 0 <= y2 < len(octopi) and 0 <= x2 < len(octopi[y2]) and (x2, y2) not in flashed:
+                                    octopi[y2][x2] += 1
+            flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
+    return step
+
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -619,6 +679,8 @@ def main():
     print("Day 9 Puzzle 2:", puzzle_9_2())
     print("Day 10 Puzzle 1:", puzzle_10_1())
     print("Day 10 Puzzle 2:", puzzle_10_2())
+    print("Day 11 Puzzle 1:", puzzle_11_1())
+    print("Day 11 Puzzle 2:", puzzle_11_2())
 
 if __name__ == '__main__':
     main()

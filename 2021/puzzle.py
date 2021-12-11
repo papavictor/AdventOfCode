@@ -629,10 +629,7 @@ def puzzle_11_1():
 
 def puzzle_11_2():
     with open("11.txt") as fp:
-        data = fp.read().strip().splitlines()
-    octopi = []
-    for line in data:
-        octopi.append(list(map(int, line)))
+        octopi = [list(map(int,  line)) for line in fp.read().strip().splitlines()]
     num_flashed = 0
     step = 0
     while num_flashed != 100:
@@ -656,7 +653,6 @@ def puzzle_11_2():
                                     octopi[y2][x2] += 1
             flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
     return step
-
 
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())

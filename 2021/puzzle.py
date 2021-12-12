@@ -654,6 +654,79 @@ def puzzle_11_2():
             flash_count = sum([list(map(lambda x: x>9, l)).count(True) for l in octopi])
     return step
 
+def puzzle_12_1():
+    with open("12.txt") as fp:
+        data = fp.read().strip().splitlines()
+    paths = []
+    connections = {}
+    for line in data:
+        (a,b) = line.split("-")
+        if a in connections:
+            connections[a].append(b)
+        else:
+            connections[a] = [b]
+    def _rec_find_paths(p, thus_far):
+        paths = []
+        for c in connections:
+            if c == "end":
+                if p in connections[c]:
+                    paths.append("{},{}".format(thus_far, c))
+            elif (c == c.upper() or c not in thus_far.split(",")) and p in connections[c]:
+                paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+        if p in connections:
+            for c in connections[p]:
+                if c == c.lower() and c in thus_far.split(","):
+                    continue
+                if c == "end":
+                    paths.append("{},{}".format(thus_far, c))
+                else:
+                    paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+        return paths
+    paths = (_rec_find_paths("start", "start"))
+    return len(paths)
+
+def puzzle_12_2():
+    with open("12.txt") as fp:
+        data = fp.read().strip().splitlines()
+    connections = {}
+    for line in data:
+        (a,b) = line.split("-")
+        if a in connections:
+            connections[a].append(b)
+        else:
+            connections[a] = [b]
+    def _rec_find_paths(p, thus_far):
+        paths = []
+        small_caves = [x for x in thus_far.split(",") if x.lower() == x]
+        for c in connections:
+            if c == "end":
+                if p in connections[c]:
+                    paths.append("{},{}".format(thus_far, c))
+            elif c == "start":
+                continue
+            elif c == c.upper() and p in connections[c]:
+                paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+            elif [small_caves.count(x) for x in small_caves].count(1) == len(small_caves) and p in connections[c]:
+                paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+            elif [small_caves.count(x) for x in small_caves].count(1) == len(small_caves) - 2 and p in connections[c] and c not in small_caves:
+                if small_caves.count(c) != 2:
+                    paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+        if p in connections:
+            for c in connections[p]:
+                if c == c.lower():
+                    if c == "start":
+                        continue
+                    if [small_caves.count(x) for x in small_caves].count(1) == len(small_caves) - 2 and \
+                      small_caves.count(c) >= 1:
+                        continue
+                if c == "end":
+                    paths.append("{},{}".format(thus_far, c))
+                else:
+                    paths += _rec_find_paths(c, "{},{}".format(thus_far, c))
+        return paths
+    paths = (_rec_find_paths("start", "start"))
+    return len(paths)
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -677,6 +750,8 @@ def main():
     print("Day 10 Puzzle 2:", puzzle_10_2())
     print("Day 11 Puzzle 1:", puzzle_11_1())
     print("Day 11 Puzzle 2:", puzzle_11_2())
+    print("Day 12 Puzzle 1:", puzzle_12_1())
+    print("Day 12 Puzzle 2:", puzzle_12_2())
 
 if __name__ == '__main__':
     main()

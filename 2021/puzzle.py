@@ -727,6 +727,73 @@ def puzzle_12_2():
     paths = (_rec_find_paths("start", "start"))
     return len(paths)
 
+def puzzle_13_1():
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    points = []
+    folds = []
+    for line in data:
+        if line.count(",") == 1:
+            points.append(list(map(int, line.split(","))))
+        elif line.startswith("fold"):
+            folds.append(line.split()[2])
+    max_x = max([p[0] for p in points])
+    max_y = max([p[1] for p in points])
+    grid = [["." for i in range(max_x+1)] for j in range(max_y+1)]
+    for p in points:
+        grid[p[1]][p[0]] = '#'
+    for instr in folds:
+        (hv, pos) = instr.split("=")
+        if hv == "y":
+            for y in range(int(pos), len(grid)):
+                for x in range(len(grid[0])):
+                    if grid[y][x] == '#':
+                        grid[int(pos) - (y-int(pos))][x] = '#'
+            grid = grid[:int(pos)]
+        if hv == "x":
+            for y in range(len(grid)):
+                for x in range(int(pos), len(grid[y])):
+                    if grid[y][x] == '#':
+                        grid[y][int(pos) - (x-int(pos))] = '#'
+                grid[y] = grid[y][:int(pos)]
+        break
+    dotcount = 0
+    for line in grid:
+        dotcount += line.count("#")
+    return dotcount
+
+def puzzle_13_2():
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    points = []
+    folds = []
+    for line in data:
+        if line.count(",") == 1:
+            points.append(list(map(int, line.split(","))))
+        elif line.startswith("fold"):
+            folds.append(line.split()[2])
+    max_x = max([p[0] for p in points])
+    max_y = max([p[1] for p in points])
+    grid = [["." for i in range(max_x+1)] for j in range(max_y+1)]
+    for p in points:
+        grid[p[1]][p[0]] = '#'
+    for instr in folds:
+        (hv, pos) = instr.split("=")
+        if hv == "y":
+            for y in range(int(pos), len(grid)):
+                for x in range(len(grid[0])):
+                    if grid[y][x] == '#':
+                        grid[int(pos) - (y-int(pos))][x] = '#'
+            grid = grid[:int(pos)]
+        if hv == "x":
+            for y in range(len(grid)):
+                for x in range(int(pos), len(grid[y])):
+                    if grid[y][x] == '#':
+                        grid[y][int(pos) - (x-int(pos))] = '#'
+                grid[y] = grid[y][:int(pos)]
+    for line in grid:
+        print("".join(line))
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -752,6 +819,8 @@ def main():
     print("Day 11 Puzzle 2:", puzzle_11_2())
     print("Day 12 Puzzle 1:", puzzle_12_1())
     print("Day 12 Puzzle 2:", puzzle_12_2())
+    print("Day 13 Puzzle 1:", puzzle_13_1())
+    print("Day 13 Puzzle 2:", puzzle_13_2())
 
 if __name__ == '__main__':
     main()

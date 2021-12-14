@@ -794,6 +794,81 @@ def puzzle_13_2():
     for line in grid:
         print("".join(line))
 
+def puzzle_14_1():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    polymer = data[0]
+    ins_rules = {}
+    for line in data[2:]:
+        ins_rules[line.split(" -> ")[0]] = line.split(" -> ")[1]
+    for step in range(10):
+        next_polymer = ""
+        for c in range(len(polymer)-1):
+            (a, b) = (polymer[c], polymer[c+1])
+            if "{}{}".format(a, b) in ins_rules:
+                next_polymer += "{}{}".format(a, ins_rules["{}{}".format(a,b)])
+        next_polymer += polymer[-1]
+        polymer = list(next_polymer)
+    cvals = list(set(polymer))
+    cvd = {}
+    minc = 0
+    maxc = 0
+    for c in cvals:
+       cvd[c] = polymer.count(c)
+       if polymer.count(c) > maxc:
+           maxc = polymer.count(c)
+       elif not minc or polymer.count(c) < minc:
+           minc = polymer.count(c)
+    return maxc - minc
+
+def puzzle_14_2():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    polymer = data[0]
+    ins_rules = {}
+    for line in data[2:]:
+        ins_rules[line.split(" -> ")[0]] = line.split(" -> ")[1]
+    pairs = {}
+    for char in range(len(polymer)-1):
+        (a, b) = (polymer[char], polymer[char+1])
+        c = ins_rules["{}{}".format(a, b)]
+        if "{}{}".format(a, c) not in pairs:
+            pairs["{}{}".format(a,c)] = 1
+        else:
+            pairs["{}{}".format(a,c)] += 1
+        if "{}{}".format(c, b) not in pairs:
+            pairs["{}{}".format(c, b)] = 1
+        else:
+            pairs["{}{}".format(c, b)] += 1
+    for step in range(40):
+        nsc = {}
+        sums = {}
+        for p in pairs:
+            [a,b] = list(p)
+            c = ins_rules["{}{}".format(a, b)]
+            (ac, cb) = ("{}{}".format(a, c), "{}{}".format(c, b))
+            if ac not in nsc:
+                nsc[ac] = pairs[p]
+            else:
+                nsc[ac] += pairs[p]
+            if cb not in nsc:
+                nsc[cb] = pairs[p]
+            else:
+                nsc[cb] += pairs[p]
+            # count letters
+            if b == polymer[-1]:
+                if b in sums:
+                    sums[b] += pairs[p]
+                else:
+                    sums[b] = pairs[p]
+            if a != polymer[-1]:
+                if a in sums:
+                    sums[a] += pairs[p]
+                else:
+                    sums[a] = pairs[p]
+        pairs = nsc
+    return max(list(sums.values())) - min(list(sums.values()))
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -821,6 +896,8 @@ def main():
     print("Day 12 Puzzle 2:", puzzle_12_2())
     print("Day 13 Puzzle 1:", puzzle_13_1())
     print("Day 13 Puzzle 2:", puzzle_13_2())
+    print("Day 14 Puzzle 1:", puzzle_14_1())
+    print("Day 14 Puzzle 2:", puzzle_14_2())
 
 if __name__ == '__main__':
     main()

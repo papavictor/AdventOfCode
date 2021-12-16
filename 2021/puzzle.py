@@ -938,13 +938,22 @@ def puzzle_15_2():
             if newgrid[y][x+1] and (newgrid[y][x+1] < mn or not mn):
                 mn = newgrid[y][x+1]
         return mn
+    def _has_neighbors(y, x, newgrid):
+        if y > 0 and newgrid[y-1][x]:
+            return True
+        if y < len(newgrid) - 1 and newgrid[y+1][x]:
+            return True
+        if x > 0 and newgrid[y][x-1]:
+            return True
+        if x < len(newgrid[0]) - 1 and newgrid[y][x+1]:
+            return True
+        return False
     def _get_exposed_neighbors(newgrid):
         exposed = []
         for row in range(len(newgrid)):
             for col in range(len(newgrid[row])):
                 if newgrid[row][col] == 0:
-                    mn = _get_min_neighbor(row, col, newgrid)
-                    if mn:
+                    if _has_neighbors(row, col, newgrid):
                         exposed.append((row, col))
         return exposed
     newgrid2 = [[0 for x in range(len(grid[0]) * 5)] for y in range(len(grid) * 5)]
@@ -966,7 +975,7 @@ def puzzle_15_2():
         for nb in en:
             mn = _get_min_neighbor(nb[0], nb[1], newgrid)
             point_val = mn + grid[nb[0]][nb[1]]
-            if point_val <= count:
+            if point_val == count:
                 newgrid[nb[0]][nb[1]] = point_val
         count += 1
     return newgrid[-1][-1]

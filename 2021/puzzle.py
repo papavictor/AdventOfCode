@@ -869,6 +869,108 @@ def puzzle_14_2():
         pairs = nsc
     return max(list(sums.values())) - min(list(sums.values()))
 
+def puzzle_15_1():
+    with open("15.txt") as fp:
+        data = fp.read().strip().splitlines()
+    grid = []
+    for line in data:
+        grid.append(list(map(int, list(line))))
+    newgrid = [[0 for x in range(len(grid[0]))] for y in range(len(grid))]
+    def _get_min_neighbor(y, x, newgrid):
+        if y == 0 and x == 0:
+            return 0
+        mn = 0
+        if y > 0:
+            if newgrid[y-1][x] and (newgrid[y-1][x] < mn or not mn):
+                mn = newgrid[y-1][x]
+        if y < len(newgrid) - 1:
+            if newgrid[y+1][x] and (newgrid[y+1][x] < mn or not mn):
+                mn = newgrid[y+1][x]
+        if x > 0:
+            if newgrid[y][x-1] and (newgrid[y][x-1] < mn or not mn):
+                mn = newgrid[y][x-1]
+        if x < len(newgrid[0]) - 1:
+            if newgrid[y][x+1] and (newgrid[y][x+1] < mn or not mn):
+                mn = newgrid[y][x+1]
+        return mn
+    def _get_exposed_neighbors(newgrid):
+        exposed = []
+        for row in range(len(newgrid)):
+            for col in range(len(newgrid[row])):
+                if newgrid[row][col] == 0:
+                    mn = _get_min_neighbor(row, col, newgrid)
+                    if mn:
+                        exposed.append((row, col))
+        return exposed
+    count = 1
+    newgrid[1][0] = grid[1][0]
+    newgrid[0][1] = grid[0][1]
+    while newgrid[-1][-1] == 0:
+        en = _get_exposed_neighbors(newgrid)
+        for nb in en:
+            mn = _get_min_neighbor(nb[0], nb[1], newgrid)
+            point_val = mn + grid[nb[0]][nb[1]]
+            if point_val <= count:
+                newgrid[nb[0]][nb[1]] = point_val
+        count += 1
+    return newgrid[-1][-1]
+
+def puzzle_15_2():
+    with open("15.txt") as fp:
+        data = fp.read().strip().splitlines()
+    grid = []
+    for line in data:
+        grid.append(list(map(int, list(line))))
+    def _get_min_neighbor(y, x, newgrid):
+        if y == 0 and x == 0:
+            return 0
+        mn = 0
+        if y > 0:
+            if newgrid[y-1][x] and (newgrid[y-1][x] < mn or not mn):
+                mn = newgrid[y-1][x]
+        if y < len(newgrid) - 1:
+            if newgrid[y+1][x] and (newgrid[y+1][x] < mn or not mn):
+                mn = newgrid[y+1][x]
+        if x > 0:
+            if newgrid[y][x-1] and (newgrid[y][x-1] < mn or not mn):
+                mn = newgrid[y][x-1]
+        if x < len(newgrid[0]) - 1:
+            if newgrid[y][x+1] and (newgrid[y][x+1] < mn or not mn):
+                mn = newgrid[y][x+1]
+        return mn
+    def _get_exposed_neighbors(newgrid):
+        exposed = []
+        for row in range(len(newgrid)):
+            for col in range(len(newgrid[row])):
+                if newgrid[row][col] == 0:
+                    mn = _get_min_neighbor(row, col, newgrid)
+                    if mn:
+                        exposed.append((row, col))
+        return exposed
+    newgrid2 = [[0 for x in range(len(grid[0]) * 5)] for y in range(len(grid) * 5)]
+    for x in range(5):
+        row = []
+        for y in range(5):
+            dist = x+y
+            newlistappd = list(map(lambda l: list(map(lambda k: (k + dist) % 9 if (k + dist) > 9 else k + dist, l)), grid))
+            for y1 in range(len(newlistappd)):
+                for x1 in range(len(newlistappd[y1])):
+                    newgrid2[y1 + len(newlistappd)*y][x1 + len(newlistappd[0]) * x] = newlistappd[y1][x1]
+    grid = newgrid2
+    newgrid = [[0 for x in range(len(grid[0]))] for y in range(len(grid))]
+    newgrid[1][0] = grid[1][0]
+    newgrid[0][1] = grid[0][1]
+    count = 1
+    while newgrid[-1][-1] == 0:
+        en = _get_exposed_neighbors(newgrid)
+        for nb in en:
+            mn = _get_min_neighbor(nb[0], nb[1], newgrid)
+            point_val = mn + grid[nb[0]][nb[1]]
+            if point_val <= count:
+                newgrid[nb[0]][nb[1]] = point_val
+        count += 1
+    return newgrid[-1][-1]
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -898,6 +1000,8 @@ def main():
     print("Day 13 Puzzle 2:", puzzle_13_2())
     print("Day 14 Puzzle 1:", puzzle_14_1())
     print("Day 14 Puzzle 2:", puzzle_14_2())
+    print("Day 15 Puzzle 1:", puzzle_15_1())
+    print("Day 15 Puzzle 2:", puzzle_15_2())
 
 if __name__ == '__main__':
     main()

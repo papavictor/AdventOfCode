@@ -980,37 +980,377 @@ def puzzle_15_2():
         count += 1
     return newgrid[-1][-1]
 
+def puzzle_16_1():
+    with open("16.txt") as fp:
+        data = fp.read().strip()
+    bin_rep = ""
+    for char in data:
+        bin_rep += "{:04}".format(int(bin(int(char, 16)).split("b")[1]))
+    #print("len(bin_rep)", len(bin_rep))
+    #print(data)
+    #print(bin_rep)
+    def _parse_packet(bin_rep):
+        #global sum_vers
+        ver = int(bin_rep[0:3], 2)
+        #global sum_vers
+        #sum_vers += ver
+        vers_sum = 0
+        vers_sum += ver
+        typeid = int(bin_rep[3:6], 2)
+        bin_rep = bin_rep[6:]
+        if typeid == 4:
+            num = ""
+            #print("typeid = {} : ver: {}".format(typeid, ver))
+            bite = bin_rep[0:5]
+            bin_rep = bin_rep[5:]
+            while bite[0] == "1":
+                num += bite[1:]
+                bite = bin_rep[0:5]
+                bin_rep = bin_rep[5:]
+            num += bite[1:]
+            #print("typeid 4: {}, {}, {}".format(num, int(num, 2), bite))
+            #print("contains literal value: ", int(num, 2))
+            #print(bin_rep)
+            #print(vers_sum)
+            return(int(num, 2), bin_rep, vers_sum)
+        else:
+            length_type_id = bin_rep[0]
+            bin_rep = bin_rep[1:]
+            #print("typeid = {} : ver: {}".format(typeid, ver))
+            #print("operator packet, version {}, typeid {}, lengthtypeid {}".format(ver, typeid, length_type_id))
+            if length_type_id == '0':
+                #print("len(bin_rep): {}".format(len(bin_rep)))
+                bitlength = bin_rep[0:15]
+                bin_rep = bin_rep[15:]
+                #print('\\bitlength', int(bitlength, 2))
+                #print("-\\", ver, typeid, length_type_id, int(bitlength, 2), bin_rep)
+                #while(len(bin_rep) > int(bitlength, 2)):
+                #pktcnt = 0
+                subpacket = bin_rep[:int(bitlength, 2)]
+                bin_rep = bin_rep[int(bitlength, 2):]
+                #print("--\\ subpacket: ", subpacket)
+                while(len(subpacket)): # TODO may have to consider trailing 0s, may do while len < 10 or something...
+                    (num, subpacket, ver) = _parse_packet(subpacket)
+                    vers_sum += ver
+                    #print(subpacket)
+                    #print("---\\num: {}, ver: {}".format(num, ver))
+                    #bin_rep = bin_rep[int(bitlength, 2):]
+                    #print("subpacket", subpacket)
+                    #print("bin_rep: ", bin_rep)
+                #(num, bin_rep) = _parse_packet(bin_rep)
+                #print(num)
+                #print(vers_sum)
+                return (None, bin_rep, vers_sum)
+            else:
+                num_pkts = bin_rep[0:11]
+                bin_rep = bin_rep[11:]
+                #print("bin_rep: ", bin_rep)
+                #print('contains {} subpackets'.format(int(num_pkts, 2)))
+                #print(ver, typeid, length_type_id, int(num_pkts, 2))
+                #print(bin_rep)
+                for i in range(int(num_pkts, 2)):
+                    #ver = int(bin_rep[0:3], 2)
+                    #typeid = int(bin_rep[3:6], 2)
+                    #bin_rep = bin_rep[6:]
+                    #print("i: {}".format(i))
+                    #print("i: {}, len(bin_rep): {}".format(i, len(bin_rep)))
+                    (num, bin_rep, ver) = _parse_packet(bin_rep)
+                    #print("returning from recursive call", num, bin_rep, ver)
+                    vers_sum += ver
+                    #print(num)
+                #print(vers_sum)
+                return (None, bin_rep, vers_sum)
+    (num, bin_rep, vers_sum) = _parse_packet(bin_rep)
+    #print(num)
+    return vers_sum
+
+def puzzle_16_2():
+    #with open("16.test.2.6.txt") as fp:
+    with open("16.txt") as fp:
+        data = fp.read().strip()
+    bin_rep = ""
+    for char in data:
+        bin_rep += "{:04}".format(int(bin(int(char, 16)).split("b")[1]))
+    #print(data)
+    def _parse_packet(bin_rep):
+        #print("parsing... len: {}".format(len(bin_rep)))
+        ver = int(bin_rep[0:3], 2)
+        typeid = int(bin_rep[3:6], 2)
+        bin_rep = bin_rep[6:]
+        if typeid == 4:
+            num = ""  
+            bite = bin_rep[0:5]
+            bin_rep = bin_rep[5:]
+            #print("packet, typeid: {}, ver: {}".format(typeid, ver))
+            while bite[0] == "1":
+                #print("adding to num: {}, new bite: {}".format(num, bite))
+                num += bite[1:] 
+                bite = bin_rep[0:5]
+                bin_rep = bin_rep[5:] 
+            #print("adding to num: {}, new bite: {}".format(num, bite))
+            num += bite[1:]
+            #print("literal: {}".format(int(num, 2)))
+            return(int(num, 2), bin_rep)
+        else:
+            length_type_id = bin_rep[0]
+            #print("packet, typeid: {}, ver: {}, length_type_id: {}".format(typeid, ver, length_type_id))
+            bin_rep = bin_rep[1:]
+            if length_type_id == '0':
+                bitlength = bin_rep[0:15]
+                bin_rep = bin_rep[15:]
+                subpacket = bin_rep[:int(bitlength, 2)]
+                bin_rep = bin_rep[int(bitlength, 2):]
+                tot_vals = -1
+                #print("len(subpacket): {}".format(len(subpacket)))
+                while(len(subpacket)):
+                    (num, subpacket) = _parse_packet(subpacket)
+                    #print("len(subpacket): {}".format(len(subpacket)))
+                    #print("subpacket num: {}".format(num))
+                    if typeid == 0:
+                        #print("adding {} to sum ({})".format(num, tot_vals), end=", ")
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            tot_vals += num
+                        #print("total {}.".format(tot_vals))
+                    elif typeid == 1:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("multiplying subpacket {} by product: {}".format(tot_vals, num), end=", ")
+                            tot_vals *= num
+                            #print("total: {}".format(tot_vals))
+                    elif typeid == 2:
+                        if tot_vals == -1:
+                            #print("setting up minimum", num, tot_vals, len(subpacket))
+                            tot_vals = num
+                        else:
+                            #print("testing minimum of {} against: {}".format(tot_vals, num), end=", ")
+                            if num < tot_vals:
+                                tot_vals = num
+                            #print("result, min: {}".format(tot_vals))
+                    elif typeid == 3:
+                        #print("testing maximum of {} against: {}".format(tot_vals, num), end=", ")
+                        if num > tot_vals:
+                            tot_vals = num
+                        #print("result, max: {}".format(tot_vals))
+                    elif typeid == 5:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing if {} > {}".format(tot_vals, num), end=", ")
+                            if tot_vals > num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                    elif typeid == 6:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing {} less than {}".format(tot_vals, num), end=", ")
+                            if tot_vals < num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                    elif typeid == 7:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        
+                        else:
+                            #print("testing {} == {}".format(num, tot_vals), end=", ")
+                            if tot_vals == num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                #print("returning total: {}".format(tot_vals))
+                return (tot_vals, bin_rep)
+            else:   
+                num_pkts = bin_rep[0:11]
+                bin_rep = bin_rep[11:]
+                tot_vals = -1
+                #print("packet: ver: {}, subpkts: {}".format(ver, int(num_pkts, 2)))
+                for i in range(int(num_pkts, 2)):
+                    #print("subpkt {}".format(i))
+                    #print(tot_vals)
+                    (num, bin_rep) = _parse_packet(bin_rep)
+                    if typeid == 0:
+                        #print("adding {} to sum ({})".format(num, tot_vals), end=", ")
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            tot_vals += num
+                        #print("total {}".format(tot_vals))
+                    elif typeid == 1:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("multiplying {} by product {}".format(num, tot_vals))
+                            tot_vals *= num
+                            #print("tot_vals", tot_vals)
+                    elif typeid == 2:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing minimum of {} against: {}".format(tot_vals, num), end=", ")
+                            if num < tot_vals:
+                                tot_vals = num
+                            #print("result, min: {}".format(tot_vals))
+                    elif typeid == 3:
+                        #print("testing maximum of {} against: {}".format(num, tot_vals), end=", ")
+                        if num > tot_vals:
+                            tot_vals = num
+                        #print("result max: {}".format(tot_vals))
+                    elif typeid == 5:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing {} greater than {}".format(tot_vals, num), end=", ")
+                            if tot_vals > num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                    elif typeid == 6:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing {} less than {}".format(tot_vals, num), end=", ")
+                            if tot_vals < num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                    elif typeid == 7:
+                        if tot_vals == -1:
+                            tot_vals = num
+                        else:
+                            #print("testing {} == {}".format(num, tot_vals), end=", ")
+                            if tot_vals == num:
+                                tot_vals = 1
+                            else:
+                                tot_vals = 0
+                            #print("result: {}".format(tot_vals))
+                #print("returning total: {}".format(tot_vals))
+                    #tot_vals += num
+                    #print("subpacket {}, done.".format(num))
+                return (tot_vals, bin_rep)
+    (num, bin_rep) = _parse_packet(bin_rep)
+    return num # 170256049335 too high, answer is 167737115857
+
+def puzzle_17_1():
+    with open("17.txt") as fp:
+        data = fp.read().strip()
+    target_area = data.split(": ")[1].split(", ")
+    target_xmin = min(map(int, target_area[0].split("=")[1].split("..")))
+    target_xmax = max(map(int, target_area[0].split("=")[1].split("..")))
+    target_ymin = min(map(int, target_area[1].split("=")[1].split("..")))
+    target_ymax = max(map(int, target_area[1].split("=")[1].split("..")))
+    grid = [["." for x in range(min(target_xmin, 0), target_xmax)] for y in range(target_ymin, max(0, target_ymax)+1)]
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            if target_ymin <= 0 - y <= target_ymax:
+                if target_xmax > x > target_xmin:
+                    grid[y][x] = "T"
+    max_y = 0
+    for iy in range(abs(target_ymin)):
+        for ix in range(target_xmax):
+            shots = []
+            x = ix
+            y = iy
+            prev_shot = [0,0]
+            while x+prev_shot[0] <= target_xmax and y+prev_shot[1] >= target_ymin:
+                ps = prev_shot
+                prev_shot = [x+ps[0], y+ps[1]]
+                y -= 1
+                if x > 0:
+                    x -= 1
+                elif x < 0:
+                    x += 1
+                shots.append(prev_shot)
+            if target_xmin <= prev_shot[0] <= target_xmax and target_ymin <= prev_shot[1] <= target_ymax:
+                for s in shots:
+                    if s[1] > max_y:
+                        max_y = s[1]
+    return max_y
+
+def puzzle_17_2():
+    with open("17.txt") as fp:
+        data = fp.read().strip()
+    target_area = data.split(": ")[1].split(", ")
+    target_xmin = min(map(int, target_area[0].split("=")[1].split("..")))
+    target_xmax = max(map(int, target_area[0].split("=")[1].split("..")))
+    target_ymin = min(map(int, target_area[1].split("=")[1].split("..")))
+    target_ymax = max(map(int, target_area[1].split("=")[1].split("..")))
+    grid = [["." for x in range(min(target_xmin, 0), target_xmax)] for y in range(target_ymin, max(0, target_ymax)+1)]
+    for y in range(len(grid)): 
+        for x in range(len(grid[y])):
+            if target_ymin <= 0 - y <= target_ymax: 
+                if target_xmax > x > target_xmin:
+                    grid[y][x] = "T"
+    max_y = 0
+    count_swishes = 0
+    swishes = []
+    for iy in range(target_ymin -1, max(abs(target_ymax), abs(target_ymin)) +1):
+        for ix in range(target_xmax + 1):
+            shots = []
+            x = ix
+            y = iy
+            prev_shot = [0,0]
+            while x+prev_shot[0] <= target_xmax and y+prev_shot[1] >= target_ymin:
+                ps = prev_shot
+                prev_shot = [x+ps[0], y+ps[1]]
+                y -= 1
+                if x > 0:
+                    x -= 1
+                elif x < 0:
+                    x += 1
+                shots.append(prev_shot)
+            if target_xmin <= prev_shot[0] <= target_xmax and target_ymin <= prev_shot[1] <= target_ymax:
+                swishes.append([ix, iy])
+                count_swishes += 1
+                for s in shots:
+                    if s[1] > max_y:
+                        max_y = s[1]
+    return count_swishes
+
 def main():
-    print("Day 1 Puzzle 1:", puzzle_1_1())
-    print("Day 1 Puzzle 2:", puzzle_1_2())
-    print("Day 2 Puzzle 1:", puzzle_2_1())
-    print("Day 2 Puzzle 2:", puzzle_2_2())
-    print("Day 3 Puzzle 1:", puzzle_3_1())
-    print("Day 3 Puzzle 2:", puzzle_3_2())
-    print("Day 4 Puzzle 1:", puzzle_4_1())
-    print("Day 4 Puzzle 2:", puzzle_4_2())
-    print("Day 5 Puzzle 1:", puzzle_5_1())
-    print("Day 5 Puzzle 2:", puzzle_5_2())
-    print("Day 6 Puzzle 1:", puzzle_6_1())
-    print("Day 6 Puzzle 2:", puzzle_6_2())
-    print("Day 7 Puzzle 1:", puzzle_7_1())
-    print("Day 7 Puzzle 2:", puzzle_7_2())
-    print("Day 8 Puzzle 1:", puzzle_8_1())
-    print("Day 8 Puzzle 2:", puzzle_8_2())
-    print("Day 9 Puzzle 1:", puzzle_9_1())
-    print("Day 9 Puzzle 2:", puzzle_9_2())
-    print("Day 10 Puzzle 1:", puzzle_10_1())
-    print("Day 10 Puzzle 2:", puzzle_10_2())
-    print("Day 11 Puzzle 1:", puzzle_11_1())
-    print("Day 11 Puzzle 2:", puzzle_11_2())
-    print("Day 12 Puzzle 1:", puzzle_12_1())
-    print("Day 12 Puzzle 2:", puzzle_12_2())
-    print("Day 13 Puzzle 1:", puzzle_13_1())
-    print("Day 13 Puzzle 2:", puzzle_13_2())
-    print("Day 14 Puzzle 1:", puzzle_14_1())
-    print("Day 14 Puzzle 2:", puzzle_14_2())
-    print("Day 15 Puzzle 1:", puzzle_15_1())
-    print("Day 15 Puzzle 2:", puzzle_15_2())
+    #print("Day 1 Puzzle 1:", puzzle_1_1())
+    #print("Day 1 Puzzle 2:", puzzle_1_2())
+    #print("Day 2 Puzzle 1:", puzzle_2_1())
+    #print("Day 2 Puzzle 2:", puzzle_2_2())
+    #print("Day 3 Puzzle 1:", puzzle_3_1())
+    #print("Day 3 Puzzle 2:", puzzle_3_2())
+    #print("Day 4 Puzzle 1:", puzzle_4_1())
+    #print("Day 4 Puzzle 2:", puzzle_4_2())
+    #print("Day 5 Puzzle 1:", puzzle_5_1())
+    #print("Day 5 Puzzle 2:", puzzle_5_2())
+    #print("Day 6 Puzzle 1:", puzzle_6_1())
+    #print("Day 6 Puzzle 2:", puzzle_6_2())
+    #print("Day 7 Puzzle 1:", puzzle_7_1())
+    #print("Day 7 Puzzle 2:", puzzle_7_2())
+    #print("Day 8 Puzzle 1:", puzzle_8_1())
+    #print("Day 8 Puzzle 2:", puzzle_8_2())
+    #print("Day 9 Puzzle 1:", puzzle_9_1())
+    #print("Day 9 Puzzle 2:", puzzle_9_2())
+    #print("Day 10 Puzzle 1:", puzzle_10_1())
+    #print("Day 10 Puzzle 2:", puzzle_10_2())
+    #print("Day 11 Puzzle 1:", puzzle_11_1())
+    #print("Day 11 Puzzle 2:", puzzle_11_2())
+    #print("Day 12 Puzzle 1:", puzzle_12_1())
+    #print("Day 12 Puzzle 2:", puzzle_12_2())
+    #print("Day 13 Puzzle 1:", puzzle_13_1())
+    #print("Day 13 Puzzle 2:", puzzle_13_2())
+    #print("Day 14 Puzzle 1:", puzzle_14_1())
+    #print("Day 14 Puzzle 2:", puzzle_14_2())
+    #print("Day 15 Puzzle 1:", puzzle_15_1())
+    #print("Day 15 Puzzle 2:", puzzle_15_2())
+    print("Day 16 Puzzle 1:", puzzle_16_1())
+    print("Day 16 Puzzle 2:", puzzle_16_2())
+    print("Day 17 Puzzle 1:", puzzle_17_1())
+    print("Day 17 Puzzle 2:", puzzle_17_2())
 
 if __name__ == '__main__':
     main()

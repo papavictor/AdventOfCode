@@ -1228,6 +1228,218 @@ def puzzle_17_2():
                         max_y = s[1]
     return count_swishes
 
+def puzzle_18_1():
+    with open("18.txt") as fp:
+        data = fp.read().strip().splitlines()
+    
+    def _txt_explode(line):
+        prev_char = None
+        prev_int = None
+        cur_int = None
+        add_to_next = None
+        nest_count = 0
+        new_line = ""
+        has_exploded = False
+        has_just_exploded = False
+        double_dig = False
+        for c in range(len(line)):
+            if double_dig:
+                double_dig = False
+                continue
+            if line[c] == '[':
+                nest_count += 1
+                if nest_count <= 4 or has_exploded:
+                    new_line += line[c]
+            elif line[c] == ']':
+                nest_count -= 1
+                if add_to_next and nest_count == 4:
+                    new_line += "0"
+                if nest_count < 4 or (has_exploded and not has_just_exploded):
+                    new_line += line[c]
+                has_just_exploded = False
+            elif line[c].isdigit():
+                if c < len(line) -1 and line[c+1].isdigit():
+                    cur_int = line[c] + line[c+1]
+                    double_dig = True
+                else:
+                    cur_int = line[c]
+                if nest_count > 4 and not has_exploded:
+                    if prev_char == '[':
+                        if prev_int:
+                            new_line = prev_int.join(new_line.split(prev_int)[:-1]) + str(int(prev_int) + int(cur_int)) + new_line.split(prev_int)[-1]
+                            prev_int = str(int(prev_int) + int(cur_int))
+                    else:
+                        add_to_next = cur_int
+                        has_exploded = True
+                        has_just_exploded = True
+                elif add_to_next:
+                    new_line += str(int(add_to_next) + int(cur_int))
+                    add_to_next = None
+                else:
+                    new_line += cur_int
+            elif line[c] == ',':
+                prev_int = cur_int
+                if nest_count <= 4 or has_exploded:
+                    new_line += line[c]
+            if double_dig:
+                prev_char = cur_int
+            else:
+                prev_char = line[c]
+        return new_line
+    
+    def _txt_split(line):
+        prev_char = ''
+        cur_char = ''
+        new_line = ""
+        split_once = False
+        for c in line:
+            prev_char = cur_char
+            cur_char = c
+            if prev_char.isdigit() and cur_char.isdigit() and not split_once:
+                double_digit = int(f"{prev_char}{cur_char}")
+                round_down = int(double_digit/2)
+                round_up = double_digit - round_down
+                new_line += f"[{round_down},{round_up}"
+                split_once = True
+                cur_char = "]"
+            else:
+                new_line += prev_char
+        new_line += cur_char
+        return new_line
+    
+    def _reduce_line(line):
+        new_line = _txt_explode(line)
+        if new_line == line:
+            new_line = _txt_split(line)
+        while line != new_line:
+            line = new_line
+            new_line = _txt_explode(line)
+            if line == new_line:
+                new_line = _txt_split(line)
+        return new_line
+    
+    def _get_magnitude(line):
+        eq = line.replace("[", "3*(").replace(",", ")+2*(").replace("]", ")")
+        return eval(eq)
+    
+    line1 = data[0]
+    line2 = data[1]
+    linea = f"[{line1},{line2}]"
+    result1 = _reduce_line(linea)
+    for line in data[2:]:
+        linea = f"[{result1},{line}]"
+        result1 = _reduce_line(linea)
+    final_sum = result1
+    return _get_magnitude(final_sum)
+    
+def puzzle_18_2():
+    with open("18.txt") as fp:
+        data = fp.read().strip().splitlines()
+
+    def _txt_explode(line):
+        prev_char = None
+        prev_int = None
+        cur_int = None
+        add_to_next = None
+        nest_count = 0
+        new_line = ""
+        has_exploded = False
+        has_just_exploded = False
+        double_dig = False
+        for c in range(len(line)):
+            if double_dig:
+                double_dig = False
+                continue
+            if line[c] == '[':
+                nest_count += 1
+                if nest_count <= 4 or has_exploded:
+                    new_line += line[c]
+            elif line[c] == ']':
+                nest_count -= 1
+                if add_to_next and nest_count == 4:
+                    new_line += "0"
+                if nest_count < 4 or (has_exploded and not has_just_exploded):
+                    new_line += line[c]
+                has_just_exploded = False
+            elif line[c].isdigit():
+                if c < len(line) -1 and line[c+1].isdigit():
+                    cur_int = line[c] + line[c+1]
+                    double_dig = True
+                else:
+                    cur_int = line[c]
+                if nest_count > 4 and not has_exploded:
+                    if prev_char == '[':
+                        if prev_int:
+                            new_line = prev_int.join(new_line.split(prev_int)[:-1]) + str(int(prev_int) + int(cur_int)) + new_line.split(prev_int)[-1]
+                            prev_int = str(int(prev_int) + int(cur_int))
+                    else:
+                        add_to_next = cur_int
+                        has_exploded = True
+                        has_just_exploded = True
+                elif add_to_next:
+                    new_line += str(int(add_to_next) + int(cur_int))
+                    add_to_next = None
+                else:
+                    new_line += cur_int
+            elif line[c] == ',':
+                prev_int = cur_int
+                if nest_count <= 4 or has_exploded:
+                    new_line += line[c]
+            if double_dig:
+                prev_char = cur_int
+            else:
+                prev_char = line[c]
+        return new_line
+    
+    def _txt_split(line):
+        prev_char = ''
+        cur_char = ''
+        new_line = ""
+        split_once = False
+        for c in line:
+            prev_char = cur_char
+            cur_char = c
+            if prev_char.isdigit() and cur_char.isdigit() and not split_once:
+                double_digit = int(f"{prev_char}{cur_char}")
+                round_down = int(double_digit/2)
+                round_up = double_digit - round_down
+                new_line += f"[{round_down},{round_up}"
+                split_once = True
+                cur_char = "]"
+            else:
+                new_line += prev_char
+        new_line += cur_char
+        return new_line
+
+    def _reduce_line(line):
+        new_line = _txt_explode(line)
+        if new_line == line:
+            new_line = _txt_split(line)
+        while line != new_line:
+            line = new_line
+            new_line = _txt_explode(line)
+            if line == new_line:
+                new_line = _txt_split(line)
+        return new_line
+
+    def _get_magnitude(line):
+        eq = line.replace("[", "3*(").replace(",", ")+2*(").replace("]", ")")
+        return eval(eq)
+
+    max_sum = 0
+    for x in range(len(data)):
+        for y in range(len(data)):
+            if x == y:
+                continue
+            line1 = data[x]
+            line2 = data[y]
+            linea = f"[{line1},{line2}]"
+            result1 = _reduce_line(linea)
+            magnitude = _get_magnitude(result1)
+            if magnitude > max_sum:
+                max_sum = magnitude
+    return max_sum
+
 def main():
     print("Day 1 Puzzle 1:", puzzle_1_1())
     print("Day 1 Puzzle 2:", puzzle_1_2())
@@ -1263,6 +1475,8 @@ def main():
     print("Day 16 Puzzle 2:", puzzle_16_2())
     print("Day 17 Puzzle 1:", puzzle_17_1())
     print("Day 17 Puzzle 2:", puzzle_17_2())
+    print("Day 18 Puzzle 1:", puzzle_18_1())
+    print("Day 18 Puzzle 2:", puzzle_18_2())
 
 if __name__ == '__main__':
     main()

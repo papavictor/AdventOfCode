@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import string
+
 def puzzle_1_1():
     with open("1.txt") as fp:
         data = fp.read().strip().splitlines()
@@ -52,11 +54,37 @@ def puzzle_2_2():
         total += wld_score[end] + shapes[op][end]
     return total
 
+def puzzle_3_1():
+    with open("3.txt") as fp:
+        data = fp.read().strip().splitlines()
+    total = 0
+    for line in data:
+        (fh, lh) = (line[:int(len(line)/2)], line[int(len(line)/2):])
+        for c in fh:
+            if c in lh:
+                total += string.ascii_letters.index(c) + 1
+                break
+    return total
+
+def puzzle_3_2():
+    with open("3.txt") as fp:
+        data = fp.read().strip().splitlines()
+    total = 0
+    while data:
+        (elf1, elf2, elf3) = data.pop(0), data.pop(0), data.pop(0)
+        for c in elf1:
+            if c in elf2 and c in elf3:
+                total += string.ascii_letters.index(c) + 1
+                break
+    return total
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
     print(puzzle_2_1())
     print(puzzle_2_2())
+    print(puzzle_3_1())
+    print(puzzle_3_2())
 
 if __name__ == '__main__':
     main()

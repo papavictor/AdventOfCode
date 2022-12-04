@@ -78,6 +78,31 @@ def puzzle_3_2():
                 break
     return total
 
+def puzzle_4_1():
+    with open("4.txt") as fp:
+        data = fp.read().strip().splitlines()
+    c = 0
+    for line in data:
+        e1, e2 = map(lambda x: x.split("-"), line.split(","))
+        e1l = list(range(int(e1[0]), int(e1[1]) + 1))
+        e2l = list(range(int(e2[0]), int(e2[1]) + 1))
+        if list(set(e1l) - set(e2l)) == [] or list(set(e2l) - set(e1l)) == []:
+            c += 1
+    return c
+
+def puzzle_4_2():
+    with open("4.txt") as fp:
+        data = fp.read().strip().splitlines()
+    c = 0
+    for line in data:
+        e1, e2 = map(lambda x: x.split("-"), line.split(","))
+        e1l = list(range(int(e1[0]), int(e1[1]) + 1))
+        e2l = list(range(int(e2[0]), int(e2[1]) + 1))
+        if e1l[0] in e2l or e1l[:-1] in e2l or \
+           e2l[0] in e1l or e2l[:-1] in e1l:
+            c += 1
+    return c
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -85,6 +110,8 @@ def main():
     print(puzzle_2_2())
     print(puzzle_3_1())
     print(puzzle_3_2())
+    print(puzzle_4_1())
+    print(puzzle_4_2())
 
 if __name__ == '__main__':
     main()

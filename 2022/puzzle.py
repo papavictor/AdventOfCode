@@ -103,6 +103,62 @@ def puzzle_4_2():
             c += 1
     return c
 
+def puzzle_5_1():
+    with open("5.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    stacks = {}
+    moves = []
+    instack = True
+    for line in data:
+        if not line:
+            instack = False
+        elif instack:
+            for r in range(int(len(line)/4)+1):
+                if line[(r*4)+1] in string.ascii_letters:
+                    if r+1 in stacks:
+                        stacks[r+1].append(line[(r*4)+1])
+                    else: 
+                        stacks[r+1] = [line[(r*4)+1]]
+        else:
+            l = line.split()
+            moves.append([int(l[1]), int(l[3]), int(l[5])])
+    for m in moves:
+        for c in range(m[0]):
+            stacks[m[2]].insert(0, stacks[m[1]].pop(0))
+    result = ""
+    for i in range(len(stacks)):
+        result += stacks[i+1][0]
+    return result
+
+def puzzle_5_2():
+    with open("5.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    stacks = {}
+    moves = []
+    instack = True
+    for line in data:
+        if not line:
+            instack = False
+        elif instack:
+            for r in range(int(len(line)/4)+1):
+                if line[(r*4)+1] in string.ascii_letters:
+                    if r+1 in stacks:
+                        stacks[r+1].append(line[(r*4)+1])
+                    else: 
+                        stacks[r+1] = [line[(r*4)+1]]
+        else:
+            l = line.split()
+            moves.append([int(l[1]), int(l[3]), int(l[5])])
+    for m in moves:
+        boxes = stacks[m[1]][0:m[0]]
+        for i in range(m[0]):
+            stacks[m[1]].pop(0)
+        stacks[m[2]] = boxes + stacks[m[2]]
+    result = ""
+    for i in range(len(stacks)):
+        result += stacks[i+1][0]
+    return result
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -112,6 +168,8 @@ def main():
     print(puzzle_3_2())
     print(puzzle_4_1())
     print(puzzle_4_2())
+    print(puzzle_5_1())
+    print(puzzle_5_2())
 
 if __name__ == '__main__':
     main()

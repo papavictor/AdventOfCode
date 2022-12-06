@@ -159,6 +159,42 @@ def puzzle_5_2():
         result += stacks[i+1][0]
     return result
 
+def puzzle_6_1():
+    with open("6.txt") as fp:
+        data = fp.read().strip()
+    buffer = []
+    buf_point = 0
+    for c in data:
+        if len(buffer) < 4:
+            buffer.append(c)
+            buf_point += 1
+        else:
+            if len(set(buffer)) == 4:
+                break
+            else:
+                buffer.pop(0)
+                buffer.append(c)
+                buf_point += 1
+    return buf_point
+
+def puzzle_6_2():
+    with open("6.txt") as fp:
+        data = fp.read().strip()
+    buffer = []
+    buf_point = 0
+    for c in data:
+        if len(buffer) < 14:
+            buffer.append(c)
+            buf_point += 1
+        else:
+            if len(set(buffer)) == 14:
+                break
+            else:
+                buffer.pop(0)
+                buffer.append(c)
+                buf_point += 1
+    return buf_point
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -170,6 +206,8 @@ def main():
     print(puzzle_4_2())
     print(puzzle_5_1())
     print(puzzle_5_2())
+    print(puzzle_6_1())
+    print(puzzle_6_2())
 
 if __name__ == '__main__':
     main()

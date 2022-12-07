@@ -195,6 +195,131 @@ def puzzle_6_2():
                 buf_point += 1
     return buf_point
 
+def puzzle_7_1():
+    with open("7.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    dirs = {}
+    cwd = "/"
+    in_ls = False
+    for line in data:
+        l = line.split()
+        if in_ls:
+            if l[0] == "$":
+                in_ls = False
+            else:
+                (size, file) = l
+                if size == "dir":
+                    continue
+                if cwd in dirs:
+                    dirs[cwd] += int(size)
+                    if cwd != "/":
+                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
+                        if parent_dir in dirs:
+                            dirs[parent_dir] += int(size)
+                        else:
+                            dirs[parent_dir] = int(size)
+                        while parent_dir != "/":
+                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                            if parent_dir in dirs:
+                                dirs[parent_dir] += int(size)
+                            else:
+                                dirs[parent_dir] = int(size)
+                else:
+                    dirs[cwd] = int(size)
+                    if cwd != "/":
+                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
+                        if parent_dir in dirs:
+                            dirs[parent_dir] += int(size)
+                        else:
+                            dirs[parent_dir] = int(size)
+                        while parent_dir != "/":
+                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                            if parent_dir in dirs:
+                                dirs[parent_dir] += int(size)
+                            else:
+                                dirs[parent_dir] = int(size)
+        if not in_ls and l[0] == "$":
+            if l[1] == "cd":
+                if l[2].startswith("/"):
+                    cwd = l[2]
+                elif l[2].startswith(".."):
+                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1])
+                    if cwd == "":
+                        cwd = "/"
+                else:
+                    cwd = cwd.rstrip("/") + "/" + l[2]
+            elif l[1] == "ls":
+                in_ls = True
+    tot = 0
+    for d in dirs:
+        if dirs[d] <= 100000:
+            tot += dirs[d]
+    return tot
+
+def puzzle_7_2():
+    with open("7.txt") as fp: 
+        data = fp.read().rstrip().splitlines()
+    dirs = {}
+    cwd = "/"
+    in_ls = False
+    for line in data:
+        l = line.split()
+        if in_ls:
+            if l[0] == "$":
+                in_ls = False
+            else:
+                (size, file) = l
+                if size == "dir":
+                    continue
+                if cwd in dirs:
+                    dirs[cwd] += int(size)
+                    if cwd != "/":
+                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
+                        if parent_dir in dirs:
+                            dirs[parent_dir] += int(size)
+                        else:
+                            dirs[parent_dir] = int(size)
+                        while parent_dir != "/":
+                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                            if parent_dir in dirs:
+                                dirs[parent_dir] += int(size)
+                            else:
+                                dirs[parent_dir] = int(size)
+                else:
+                    dirs[cwd] = int(size)
+                    if cwd != "/":
+                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
+                        if parent_dir in dirs:
+                            dirs[parent_dir] += int(size)
+                        else:
+                            dirs[parent_dir] = int(size)
+                        while parent_dir != "/":
+                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                            if parent_dir in dirs:
+                                dirs[parent_dir] += int(size)
+                            else:
+                                dirs[parent_dir] = int(size)
+        if not in_ls and l[0] == "$":
+            if l[1] == "cd":
+                if l[2].startswith("/"):
+                    cwd = l[2] 
+                elif l[2].startswith(".."):
+                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1])
+                    if cwd == "":
+                        cwd = "/"
+                else:
+                    cwd = cwd.rstrip("/") + "/" + l[2]
+            elif l[1] == "ls":
+                in_ls = True
+    total_space = 70000000
+    update_space = 30000000
+    needed_space = update_space - (total_space - dirs["/"])
+    min_dir = update_space
+    for d in dirs:
+        if dirs[d] > needed_space and dirs[d] < min_dir:
+            min_dir = dirs[d]
+    return min_dir
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -208,6 +333,9 @@ def main():
     print(puzzle_5_2())
     print(puzzle_6_1())
     print(puzzle_6_2())
+    print(puzzle_7_1())
+    print(puzzle_7_2())
+
 
 if __name__ == '__main__':
     main()

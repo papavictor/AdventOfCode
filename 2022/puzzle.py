@@ -212,40 +212,23 @@ def puzzle_7_1():
                     continue
                 if cwd in dirs:
                     dirs[cwd] += int(size)
-                    if cwd != "/":
-                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
-                        if parent_dir in dirs:
-                            dirs[parent_dir] += int(size)
-                        else:
-                            dirs[parent_dir] = int(size)
-                        while parent_dir != "/":
-                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
-                            if parent_dir in dirs:
-                                dirs[parent_dir] += int(size)
-                            else:
-                                dirs[parent_dir] = int(size)
                 else:
                     dirs[cwd] = int(size)
-                    if cwd != "/":
-                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
-                        if parent_dir in dirs:
-                            dirs[parent_dir] += int(size)
-                        else:
-                            dirs[parent_dir] = int(size)
-                        while parent_dir != "/":
-                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
-                            if parent_dir in dirs:
-                                dirs[parent_dir] += int(size)
-                            else:
-                                dirs[parent_dir] = int(size)
+                parent_dir = cwd
+                while True:
+                    if parent_dir == "/":
+                        break
+                    parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                    if parent_dir in dirs:
+                        dirs[parent_dir] += int(size)
+                    else:
+                        dirs[parent_dir] = int(size)
         if not in_ls and l[0] == "$":
             if l[1] == "cd":
                 if l[2].startswith("/"):
                     cwd = l[2]
                 elif l[2].startswith(".."):
-                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1])
-                    if cwd == "":
-                        cwd = "/"
+                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1]) or "/"
                 else:
                     cwd = cwd.rstrip("/") + "/" + l[2]
             elif l[1] == "ls":
@@ -273,40 +256,23 @@ def puzzle_7_2():
                     continue
                 if cwd in dirs:
                     dirs[cwd] += int(size)
-                    if cwd != "/":
-                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
-                        if parent_dir in dirs:
-                            dirs[parent_dir] += int(size)
-                        else:
-                            dirs[parent_dir] = int(size)
-                        while parent_dir != "/":
-                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
-                            if parent_dir in dirs:
-                                dirs[parent_dir] += int(size)
-                            else:
-                                dirs[parent_dir] = int(size)
                 else:
                     dirs[cwd] = int(size)
-                    if cwd != "/":
-                        parent_dir = "/".join(cwd.split("/")[:-1]) or "/"
-                        if parent_dir in dirs:
-                            dirs[parent_dir] += int(size)
-                        else:
-                            dirs[parent_dir] = int(size)
-                        while parent_dir != "/":
-                            parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
-                            if parent_dir in dirs:
-                                dirs[parent_dir] += int(size)
-                            else:
-                                dirs[parent_dir] = int(size)
+                parent_dir = cwd
+                while True:
+                    if parent_dir == "/":
+                        break
+                    parent_dir = "/".join(parent_dir.split("/")[:-1]) or "/"
+                    if parent_dir in dirs:
+                        dirs[parent_dir] += int(size)
+                    else:
+                        dirs[parent_dir] = int(size)
         if not in_ls and l[0] == "$":
             if l[1] == "cd":
                 if l[2].startswith("/"):
                     cwd = l[2] 
                 elif l[2].startswith(".."):
-                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1])
-                    if cwd == "":
-                        cwd = "/"
+                    cwd = "/".join(cwd.rstrip("/").split("/")[:-1]) or "/"
                 else:
                     cwd = cwd.rstrip("/") + "/" + l[2]
             elif l[1] == "ls":

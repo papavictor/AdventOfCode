@@ -320,6 +320,75 @@ def puzzle_7_2():
             min_dir = dirs[d]
     return min_dir
 
+def puzzle_8_1():
+    with open("8.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    grid = []
+    visible_count = 0
+    for line in data:
+        grid.append(list(map(int, line)))
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            if row == 0 or row == len(grid) - 1 or \
+              col == 0 or col == len(grid[row]) - 1:
+                visible_count += 1
+            else:
+                for i in range(row): # look up
+                    if grid[i][col] >= grid[row][col]:
+                        break
+                else:
+                    visible_count += 1
+                    continue
+                for i in range(col): # look left
+                    if grid[row][i] >= grid[row][col]:
+                        break
+                else:
+                    visible_count += 1
+                    continue
+                for i in range(col + 1, len(grid[row])): # look right
+                    if grid[row][i] >= grid[row][col]:
+                        break
+                else:
+                    visible_count += 1
+                    continue
+                for i in range(row + 1, len(grid)): # look down
+                    if grid[i][col] >= grid[row][col]:
+                        break
+                else:
+                    visible_count += 1
+                    continue
+    return visible_count
+
+def puzzle_8_2():
+    with open("8.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    grid = []
+    best_view_score = 0
+    for line in data:
+        grid.append(list(map(int, line)))
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            (u, d, l, r) = (0, 0, 0, 0)
+            for i in range(row - 1, -1, -1): # look up
+                u += 1
+                if grid[i][col] >= grid[row][col]:
+                    break
+            for i in range(col - 1, -1, -1): # look left
+                l += 1
+                if grid[row][i] >= grid[row][col]:
+                    break
+            for i in range(row + 1, len(grid)): # look down
+                d += 1
+                if grid[i][col] >= grid[row][col]:
+                    break
+            for i in range(col + 1, len(grid[row])): # look right
+                r += 1
+                if grid[row][i] >= grid[row][col]:
+                    break
+            if u * d * l * r > best_view_score:
+                best_view_score = u * d * l * r
+    return best_view_score
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -335,6 +404,8 @@ def main():
     print(puzzle_6_2())
     print(puzzle_7_1())
     print(puzzle_7_2())
+    print(puzzle_8_1())
+    print(puzzle_8_2())
 
 
 if __name__ == '__main__':

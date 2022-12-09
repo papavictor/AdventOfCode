@@ -2,6 +2,31 @@
 
 import string
 
+def _draw_graph(d):
+    ''' Takes a dictionary, draws the keys at the value (tuple) x, y coords.
+        Places a 's' at the starting position.  Shifts negative (min) to 0,0.
+    '''
+    (minx, miny, maxx, maxy) = (0, 0, 0, 0)
+    for k, v in d.items():
+        if v[0] < minx:
+            minx = v[0]
+        if v[1] < miny:
+            miny = v[1]
+        if v[0] > maxx:
+            maxx = v[0]
+        if v[1] > maxy:
+            maxy = v[1]
+    l = abs(minx) + maxx + 1
+    w = abs(miny) + maxy + 1
+    graph = [['.' for i in range(l)] for j in range(w)]
+    for k in sorted(d.keys(), reverse=True):
+        graph[d[k][1] - miny][d[k][0] - minx] = k
+    graph[0 - miny][0 - minx] = "s"
+    for x in range(len(graph) - 1, -1, -1):
+        for y in range(len(graph[x])):
+            print(graph[x][y], end="")
+        print()
+
 def puzzle_1_1():
     with open("1.txt") as fp:
         data = fp.read().strip().splitlines()
@@ -355,6 +380,86 @@ def puzzle_8_2():
                 best_view_score = u * d * l * r
     return best_view_score
 
+def puzzle_9_1():
+    with open("9.txt") as fp:
+        data = fp.read().strip().splitlines()
+    h = [0, 0]
+    t = [0, 0]
+    visited_positions = []
+    for line in data:
+        (direction, distance) = line.split()
+        for i in range(int(distance)):
+            if direction == "R":
+                h[0] += 1
+            elif direction == "L":
+                h[0] -= 1
+            elif direction == "U":
+                h[1] += 1
+            elif direction == "D":
+                h[1] -= 1
+            if abs(h[0] - t[0]) > 1:
+                if t[0] > h[0]:
+                    t[0] += h[0] - t[0] + 1
+                else:
+                    t[0] += h[0] - t[0] - 1
+                if abs(h[1] - t[1]) > 1:
+                    if t[1] > h[1]:
+                        t[1] += h[1] - t[1] + 1
+                    else:
+                        t[1] += h[1] - t[1] - 1
+                elif abs(h[1] - t[1]) == 1:
+                    t[1] += h[1] - t[1]
+            if abs(h[1] - t[1]) > 1:
+                if t[1] > h[1]:
+                    t[1] += h[1] - t[1] + 1
+                else:
+                    t[1] += h[1] - t[1] - 1
+                if abs(h[0] - t[0]) == 1:
+                    t[0] += h[0] - t[0]
+            visited_positions.append(tuple(t))
+    return len(set(visited_positions))
+
+def puzzle_9_2():
+    with open("9.txt") as fp:
+        data = fp.read().strip().splitlines()
+    pos = {} # H = 0
+    for k in range(10):
+        pos[k] = [0, 0]
+    visited_positions = []
+    for line in data:
+        (direction, distance) = line.split()
+        for i in range(int(distance)):
+            if direction == "R":
+                pos[0][0] += 1
+            elif direction == "L":
+                pos[0][0] -= 1
+            elif direction == "U":
+                pos[0][1] += 1
+            elif direction == "D":
+                pos[0][1] -= 1
+            for i in range(1, 10):
+                if abs(pos[i-1][0] - pos[i][0]) > 1:
+                    if pos[i][0] > pos[i-1][0]:
+                        pos[i][0] += pos[i-1][0] - pos[i][0] + 1
+                    else:
+                        pos[i][0] += pos[i-1][0] - pos[i][0] - 1
+                    if abs(pos[i-1][1] - pos[i][1]) > 1:
+                        if pos[i][1] > pos[i-1][1]:
+                            pos[i][1] += pos[i-1][1] - pos[i][1] + 1
+                        else:
+                            pos[i][1] += pos[i-1][1] - pos[i][1] - 1
+                    elif abs(pos[i-1][1] - pos[i][1]) == 1:
+                        pos[i][1] += pos[i-1][1] - pos[i][1]
+                if abs(pos[i-1][1] - pos[i][1]) > 1:
+                    if pos[i][1] > pos[i-1][1]:
+                        pos[i][1] += pos[i-1][1] - pos[i][1] + 1
+                    else:
+                        pos[i][1] += pos[i-1][1] - pos[i][1] - 1
+                    if abs(pos[i-1][0] - pos[i][0]) == 1:
+                        pos[i][0] += pos[i-1][0] - pos[i][0]
+            visited_positions.append(tuple(pos[9]))
+    return len(set(visited_positions))
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -372,6 +477,8 @@ def main():
     print(puzzle_7_2())
     print(puzzle_8_1())
     print(puzzle_8_2())
+    print(puzzle_9_1())
+    print(puzzle_9_2())
 
 
 if __name__ == '__main__':

@@ -460,6 +460,62 @@ def puzzle_9_2():
             visited_positions.append(tuple(pos[9]))
     return len(set(visited_positions))
 
+def puzzle_10_1():
+    with open("10.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    add_cycles = list(map(lambda x: x.startswith("addx "), data)).count(True) * 2
+    noop_cycles = list(map(lambda x: x.startswith("noop"), data)).count(True)
+    total_cycles = add_cycles + noop_cycles
+    cycles = [20, 60, 100, 140, 180, 220]
+    X = 1
+    signal = 0
+    in_prog = False
+    instr = ""
+    signal_sums = 0
+    for c in range(1, total_cycles + 1):
+        signal = c * X
+        if in_prog:
+            in_prog = False
+            if c in cycles:
+                signal_sums += signal
+            X += int(instr.split()[1])
+        else:
+            instr = data.pop(0)
+            if instr.startswith("addx "):
+                in_prog = True
+            if c in cycles:
+                signal_sums += signal
+    return signal_sums
+
+def puzzle_10_2():
+    with open("10.txt") as fp:
+        data = fp.read().rstrip().splitlines()
+    add_cycles = list(map(lambda x: x.startswith("addx"), data)).count(True) * 2
+    noop_cycles = list(map(lambda x: x.startswith("noop"), data)).count(True)
+    total_cycles = add_cycles + noop_cycles
+    X = 1
+    crt = [['.' for i in range(40)] for j in range(6)]
+    signal = 0
+    in_prog = False
+    instr = ""
+    for c in range(1, total_cycles + 1):
+        crt_row = int((c - 1)/40)
+        crt_col = int((c - 1)%40)
+        signal = c * X
+        if in_prog:
+            in_prog = False
+            if X - 1 <= crt_col <= X + 1:
+                crt[crt_row][crt_col] = '#'
+            X += int(instr.split()[1])
+        else:
+            instr = data.pop(0)
+            if instr.startswith("addx "):
+                in_prog = True
+            if X - 1 <= crt_col <= X + 1:
+                crt[crt_row][crt_col] = '#'
+    output = "\n".join(["".join(line) for line in crt])
+    return output
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -479,6 +535,8 @@ def main():
     print(puzzle_8_2())
     print(puzzle_9_1())
     print(puzzle_9_2())
+    print(puzzle_10_1())
+    print(puzzle_10_2())
 
 
 if __name__ == '__main__':

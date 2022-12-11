@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import math
 import string
 
 def _draw_graph(d):
@@ -516,6 +517,72 @@ def puzzle_10_2():
     output = "\n".join(["".join(line) for line in crt])
     return output
 
+def puzzle_11_1():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    monkeys = {}
+    cur_monk = 0
+    for line in data:
+        if line.startswith("Monkey "):
+            cur_monk = int(line.strip(":").split()[1])
+            monkeys[cur_monk] = {}
+        elif line.startswith("  Starting items: "):
+            monkeys[cur_monk]["items"] = list(map(int, line.split(":")[1].strip().split(", ")))
+        elif line.startswith("  Operation: "):
+            monkeys[cur_monk]["operation"] = line.split(":")[1].strip()
+        elif line.startswith("  Test:"):
+            monkeys[cur_monk]["test"] = int(line.split()[-1])
+        elif line.startswith("    If true"):
+            monkeys[cur_monk]["test_true"] = int(line.split()[-1])
+        elif line.startswith("    If false"):
+            monkeys[cur_monk]["test_false"] = int(line.split()[-1])
+    counted = dict.fromkeys(monkeys.keys(), 0)
+    for r in range(20):
+        for m in sorted(monkeys.keys()):
+            for i in monkeys[m]["items"]:
+                counted[m] += 1
+                new = eval(monkeys[m]["operation"].split("= ")[1].replace("old", str(i)))
+                level = int(new / 3)
+                if not level % monkeys[m]["test"]:
+                    monkeys[monkeys[m]["test_true"]]["items"].append(level)
+                else:
+                    monkeys[monkeys[m]["test_false"]]["items"].append(level)
+            monkeys[m]["items"] = []
+    return math.prod(sorted(counted.values(), reverse=True)[0:2])
+
+def puzzle_11_2():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    monkeys = {}
+    cur_monk = 0
+    for line in data:
+        if line.startswith("Monkey "):
+            cur_monk = int(line.strip(":").split()[1])
+            monkeys[cur_monk] = {}
+        elif line.startswith("  Starting items: "):
+            monkeys[cur_monk]["items"] = list(map(int, line.split(":")[1].strip().split(", ")))
+        elif line.startswith("  Operation: "):
+            monkeys[cur_monk]["operation"] = line.split(":")[1].strip()
+        elif line.startswith("  Test:"):
+            monkeys[cur_monk]["test"] = int(line.split()[-1])
+        elif line.startswith("    If true"):
+            monkeys[cur_monk]["test_true"] = int(line.split()[-1])
+        elif line.startswith("    If false"):
+            monkeys[cur_monk]["test_false"] = int(line.split()[-1])
+    test_product = math.prod([monkeys[m]["test"] for m in monkeys])
+    counted = dict.fromkeys(monkeys.keys(), 0)
+    for r in range(10000):
+        for m in sorted(monkeys.keys()):
+            for i in monkeys[m]["items"]:
+                counted[m] += 1
+                new = eval(monkeys[m]["operation"].split("= ")[1].replace("old", str(i))) % test_product
+                if not new % monkeys[m]["test"]:
+                    monkeys[monkeys[m]["test_true"]]["items"].append(new)
+                else:
+                    monkeys[monkeys[m]["test_false"]]["items"].append(new)
+            monkeys[m]["items"] = []
+    return math.prod(sorted(counted.values(), reverse=True)[0:2])
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -537,6 +604,8 @@ def main():
     print(puzzle_9_2())
     print(puzzle_10_1())
     print(puzzle_10_2())
+    print(puzzle_11_1())
+    print(puzzle_11_2())
 
 
 if __name__ == '__main__':

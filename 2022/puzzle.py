@@ -583,6 +583,79 @@ def puzzle_11_2():
             monkeys[m]["items"] = []
     return math.prod(sorted(counted.values(), reverse=True)[0:2])
 
+def puzzle_12_1():
+    with open("12.txt") as fp:
+        data = list(map(lambda x: list(x), fp.read().strip().splitlines()))
+    for y in range(len(data)):
+        for x in range(len(data[y])):
+            if data[y][x] == 'S':
+                start = (x, y)
+            elif data[y][x] == 'E':
+                end = (x, y)
+    data[end[1]][end[0]] = 'z'
+    data[start[1]][start[0]] = 'a'
+    path_found = False
+    seen_cells = [end]
+    last_seen_cells = [end]
+    cur_count = 1
+    while not path_found:
+        marked_cells = []
+        for cell in last_seen_cells:
+            neighbor_cells = []
+            for i in range(cell[1] - 1, cell[1]+2):
+                for j in range(cell[0] - 1, cell[0] + 2):
+                    if i >= 0 and i < len(data) and j >= 0 and j < len(data[0]) and \
+                      (i != cell[1] and j == cell[0] or i == cell[1] and j != cell[0]):
+                        neighbor_cells.append((j, i))
+            for c in set(neighbor_cells) - set(seen_cells) - set(marked_cells):
+                if ord(data[c[1]][c[0]]) >= ord(data[cell[1]][cell[0]]) - 1:
+                    marked_cells.append(c)
+                    if c == start:
+                        path_found = True
+                        break
+            if path_found:
+                break
+        seen_cells += marked_cells
+        last_seen_cells = marked_cells
+        if not path_found:
+            cur_count += 1
+    return cur_count
+
+def puzzle_12_2():
+    with open("12.txt") as fp:
+        data = list(map(lambda x: list(x), fp.read().strip().splitlines()))
+    for y in range(len(data)):
+        for x in range(len(data[y])):
+            if data[y][x] == 'E':
+                end = (x, y)
+    data[end[1]][end[0]] = 'z'
+    path_found = False
+    seen_cells = [end]
+    last_seen_cells = [end]
+    cur_count = 1
+    while not path_found:
+        marked_cells = []
+        for cell in last_seen_cells:
+            neighbor_cells = []
+            for i in range(cell[1] - 1, cell[1]+2):
+                for j in range(cell[0] - 1, cell[0] + 2):
+                    if i >= 0 and i < len(data) and j >= 0 and j < len(data[0]) and \
+                      (i != cell[1] and j == cell[0] or i == cell[1] and j != cell[0]):
+                        neighbor_cells.append((j, i))
+            for c in set(neighbor_cells) - set(seen_cells) - set(marked_cells):
+                if ord(data[c[1]][c[0]]) >= ord(data[cell[1]][cell[0]]) - 1:
+                    marked_cells.append(c)
+                    if data[c[1]][c[0]] == 'a':
+                        path_found = True
+                        break
+            if path_found:
+                break
+        if not path_found:
+            seen_cells += marked_cells
+            last_seen_cells = marked_cells
+            cur_count += 1
+    return cur_count
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -606,6 +679,8 @@ def main():
     print(puzzle_10_2())
     print(puzzle_11_1())
     print(puzzle_11_2())
+    print(puzzle_12_1())
+    print(puzzle_12_2())
 
 
 if __name__ == '__main__':

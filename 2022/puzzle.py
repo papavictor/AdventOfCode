@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import math
 import string
 
@@ -656,6 +657,104 @@ def puzzle_12_2():
             cur_count += 1
     return cur_count
 
+def puzzle_13_1():
+    def _compare(l, r):
+        if type(l) == int and type(r) == int:
+            if l < r:
+                return True
+            elif l > r:
+                return False
+            return None
+        elif type(l) == list and type(r) == int:
+            return _compare(l, [r])
+        elif type(l) == int and type(r) == list:
+            return _compare([l], r)
+        elif type(l) == list and type(r) == list:
+            while l and r:
+                l1 = l.pop(0)
+                r1 = r.pop(0)
+                result = _compare(l1, r1)
+                if result == False:
+                    return False
+                elif result == True:
+                    return True
+            if r and not l:
+                return True
+            if l and not r:
+                return False
+            return None
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    pairs = {}
+    pc = 1
+    while data:
+        left = json.loads(data.pop(0))
+        right = json.loads(data.pop(0))
+        if data:
+            blank = data.pop(0)
+        pairs[pc] = _compare(left, right)
+        pc += 1
+    sumt = 0
+    for k, v in pairs.items():
+        if v == True:
+            sumt += k
+    return sumt
+
+def puzzle_13_2():
+    def _compare(l, r):
+        if type(l) == int and type(r) == int:
+            if l < r:
+                return True
+            elif l > r:
+                return False
+            return None
+        elif type(l) == list and type(r) == int:
+            return _compare(l, [r])
+        elif type(l) == int and type(r) == list:
+            return _compare([l], r)
+        elif type(l) == list and type(r) == list:
+            while l and r:
+                l1 = l.pop(0)
+                r1 = r.pop(0)
+                result = _compare(l1, r1)
+                if result == False:
+                    return False
+                elif result == True:
+                    return True
+            if r and not l:
+                return True
+            if l and not r:
+                return False
+            return None
+    def _quick_sort(l):
+        if len(l) < 2:
+            return l
+        partition = l[-1]
+        ltl = []
+        gtl = []
+        lc = 0
+        for e in range(len(l) - 1):
+            if _compare(json.loads(l[e]), json.loads(partition)):
+                ltl.append(l[e])
+                lc += 1
+            else:
+                gtl.append(l[e])
+        ltl = _quick_sort(ltl)
+        gtl = _quick_sort(gtl)
+        return ltl + [partition] + gtl
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    pc = 1
+    sorted_list = ['[[2]]', '[[6]]']
+    while data:
+        left = data.pop(0)
+        right = data.pop(0)
+        if data:
+            blank = data.pop(0)
+        sorted_list += [left, right]
+    sorted_list = _quick_sort(sorted_list)
+    return (sorted_list.index('[[2]]') + 1) * (sorted_list.index('[[6]]') + 1)
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -681,6 +780,8 @@ def main():
     print(puzzle_11_2())
     print(puzzle_12_1())
     print(puzzle_12_2())
+    print(puzzle_13_1())
+    print(puzzle_13_2())
 
 
 if __name__ == '__main__':

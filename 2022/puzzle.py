@@ -732,11 +732,9 @@ def puzzle_13_2():
         partition = l[-1]
         ltl = []
         gtl = []
-        lc = 0
         for e in range(len(l) - 1):
             if _compare(json.loads(l[e]), json.loads(partition)):
                 ltl.append(l[e])
-                lc += 1
             else:
                 gtl.append(l[e])
         ltl = _quick_sort(ltl)
@@ -744,7 +742,6 @@ def puzzle_13_2():
         return ltl + [partition] + gtl
     with open("13.txt") as fp:
         data = fp.read().strip().splitlines()
-    pc = 1
     sorted_list = ['[[2]]', '[[6]]']
     while data:
         left = data.pop(0)

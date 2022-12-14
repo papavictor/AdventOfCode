@@ -4,31 +4,6 @@ import json
 import math
 import string
 
-def _draw_graph(d):
-    ''' Takes a dictionary, draws the keys at the value (tuple) x, y coords.
-        Places a 's' at the starting position.  Shifts negative (min) to 0,0.
-    '''
-    (minx, miny, maxx, maxy) = (0, 0, 0, 0)
-    for k, v in d.items():
-        if v[0] < minx:
-            minx = v[0]
-        if v[1] < miny:
-            miny = v[1]
-        if v[0] > maxx:
-            maxx = v[0]
-        if v[1] > maxy:
-            maxy = v[1]
-    l = abs(minx) + maxx + 1
-    w = abs(miny) + maxy + 1
-    graph = [['.' for i in range(l)] for j in range(w)]
-    for k in sorted(d.keys(), reverse=True):
-        graph[d[k][1] - miny][d[k][0] - minx] = k
-    graph[0 - miny][0 - minx] = "s"
-    for x in range(len(graph) - 1, -1, -1):
-        for y in range(len(graph[x])):
-            print(graph[x][y], end="")
-        print()
-
 def puzzle_1_1():
     with open("1.txt") as fp:
         data = fp.read().strip().splitlines()
@@ -234,7 +209,7 @@ def puzzle_7_1():
             if l[0] == "$":
                 in_ls = False
             else:
-                (size, file) = l
+                size = l[0]
                 if size == "dir":
                     continue
                 if cwd in dirs:
@@ -278,7 +253,7 @@ def puzzle_7_2():
             if l[0] == "$":
                 in_ls = False
             else:
-                (size, file) = l
+                size = l[0]
                 if size == "dir":
                     continue
                 if cwd in dirs:
@@ -563,7 +538,7 @@ def puzzle_11_2():
         elif line.startswith("  Starting items: "):
             monkeys[cur_monk]["items"] = list(map(int, line.split(":")[1].strip().split(", ")))
         elif line.startswith("  Operation: "):
-            monkeys[cur_monk]["operation"] = line.split(":")[1].strip()
+            monkeys[cur_monk]["operation"] = line.split("=")[1].strip()
         elif line.startswith("  Test:"):
             monkeys[cur_monk]["test"] = int(line.split()[-1])
         elif line.startswith("    If true"):
@@ -572,11 +547,16 @@ def puzzle_11_2():
             monkeys[cur_monk]["test_false"] = int(line.split()[-1])
     test_product = math.prod([monkeys[m]["test"] for m in monkeys])
     counted = dict.fromkeys(monkeys.keys(), 0)
+    smk = sorted(monkeys.keys())
     for r in range(10000):
-        for m in sorted(monkeys.keys()):
+        for m in smk:
             for i in monkeys[m]["items"]:
                 counted[m] += 1
-                new = eval(monkeys[m]["operation"].split("= ")[1].replace("old", str(i))) % test_product
+                op_l = monkeys[m]["operation"].replace("old", str(i)).split()
+                if op_l[1] == '*':
+                    new = int(op_l[0]) * int(op_l[2]) % test_product
+                else:
+                    new = int(op_l[0]) + int(op_l[2]) % test_product
                 if not new % monkeys[m]["test"]:
                     monkeys[monkeys[m]["test_true"]]["items"].append(new)
                 else:

@@ -732,6 +732,114 @@ def puzzle_13_2():
     sorted_list = _quick_sort(sorted_list)
     return (sorted_list.index('[[2]]') + 1) * (sorted_list.index('[[6]]') + 1)
 
+def puzzle_14_1():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    rock_lines = []
+    minxs, maxxs, maxys = [], [], []
+    for line in data:
+        points = line.split(" -> ")
+        minxs.append(int(min(list(map(lambda x: x.split(","), points)), key=lambda x: x[0])[0]))
+        maxxs.append(int(max(list(map(lambda x: x.split(","), points)), key=lambda x: x[0])[0]))
+        maxys.append(int(max(list(map(lambda x: x.split(","), points)), key=lambda x: x[1])[1]))
+        for i in range(len(points)-1):
+            rock_lines.append((list(map(int, points[i].split(","))), list(map(int, points[i+1].split(",")))))
+    (maxx, maxy, minx, miny) = (max(maxxs) + 1, max(maxys) + 1, min(minxs), 0)
+    # design the cave #
+    cave = [['.' for i in range(maxx - minx)] for j in range(maxy - miny)]
+    spout = (500 - minx, 0-miny)
+    cave[spout[1]][spout[0]] = '+'
+    for line in rock_lines:
+        (s, e) = line
+        for x in range(min([s[0], e[0]]), max([s[0], e[0]])+1):
+            for y in range(min([s[1], e[1]]), max([s[1], e[1]])+1):
+                cave[y-miny][x-minx] = '#'
+    # drip the sand #
+    c = 0
+    end_of_game = False
+    while not end_of_game:
+        fsp = (500 - minx, 1-miny)
+        while not end_of_game:
+            if fsp[1]+ 1 < len(cave) and cave[fsp[1]+1][fsp[0]] == '.':
+                fsp = (fsp[0], fsp[1]+1)
+            elif fsp[0]-1 >= 0 and fsp[1] + 1 < len(cave) and cave[fsp[1]+1][fsp[0]-1] == '.':
+                if fsp[0]-1 == 0 and cave[fsp[1]+1][fsp[0]-1] == '.':
+                    end_of_game = True # at left edge on a diagonal with no wall
+                    break
+                fsp = (fsp[0]-1, fsp[1]+1)
+            elif fsp[0]+1 < len(cave[0]) and fsp[1] + 1 < len(cave) and cave[fsp[1]+1][fsp[0]+1] == '.':
+                if fsp[0]+1 == len(cave[0]) -1 and cave[fsp[1]+1][fsp[0]+1] == '.':
+                    end_of_game = True # at right edge on a diagonal with no wall
+                    break
+                fsp = (fsp[0]+1, fsp[1]+1)
+            else:
+                if fsp[1] + 1 == len(cave):
+                    end_of_game = True # reached the bottom
+                    break
+                break
+        if not end_of_game:
+            cave[fsp[1]][fsp[0]] = 'o'
+            c += 1
+    # draw the cave #
+    #for row in cave:
+    #    for col in row:
+    #        print(col, end="")
+    #    print()
+    return c
+
+def puzzle_14_2():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    rock_lines = []
+    minxs, maxxs, maxys = [], [], []
+    for line in data:
+        points = line.split(" -> ")
+        minxs.append(int(min(list(map(lambda x: x.split(","), points)), key=lambda x: x[0])[0]))
+        maxxs.append(int(max(list(map(lambda x: x.split(","), points)), key=lambda x: x[0])[0]))
+        maxys.append(int(max(list(map(lambda x: x.split(","), points)), key=lambda x: x[1])[1]))
+        for i in range(len(points)-1):
+            rock_lines.append((list(map(int, points[i].split(","))), list(map(int, points[i+1].split(",")))))
+    (maxx, maxy, minx, miny) = (max(maxxs) + 1, max(maxys) + 1, min(minxs), 0)
+    maxw = maxy * 2 + 4
+    rock_lines.append(((500-int(maxw/2)-1, maxy+1), (500+int(maxw/2)+1, maxy+1)))
+    maxy += 2
+    minx = 500-int(maxw/2)-1
+    maxx = 500+int(maxw/2)+2
+    # design the cave #
+    cave = [['.' for i in range(maxx - minx)] for j in range(maxy - miny)]
+    #spout = (500 - minx, 0-miny)
+    #cave[spout[1]][spout[0]] = '+'
+    for line in rock_lines:
+        (s, e) = line
+        for x in range(min([s[0], e[0]]), max([s[0], e[0]])+1):
+            for y in range(min([s[1], e[1]]), max([s[1], e[1]])+1):
+                cave[y-miny][x-minx] = '#'
+    # drip the sand #
+    c = 0
+    end_of_game = False
+    while not end_of_game:
+        fsp = (500 - minx, 0)
+        while not end_of_game:
+            if cave[fsp[1]+1][fsp[0]] == '.':
+                fsp = (fsp[0], fsp[1]+1)
+            elif cave[fsp[1]+1][fsp[0]-1] == '.':
+                fsp = (fsp[0]-1, fsp[1]+1)
+            elif cave[fsp[1]+1][fsp[0]+1] == '.':
+                fsp = (fsp[0]+1, fsp[1]+1)
+            else:
+                if fsp[1] == 0:
+                    end_of_game = True # reached the top
+                break
+        cave[fsp[1]][fsp[0]] = 'o'
+        c += 1
+    ## draw the cave #
+    #for row in cave:
+    #    for col in row:
+    #        print(col, end="")
+    #    print()
+    return c
+
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -759,6 +867,8 @@ def main():
     print(puzzle_12_2())
     print(puzzle_13_1())
     print(puzzle_13_2())
+    print(puzzle_14_1())
+    print(puzzle_14_2())
 
 
 if __name__ == '__main__':

@@ -747,8 +747,6 @@ def puzzle_14_1():
     (maxx, maxy, minx, miny) = (max(maxxs) + 1, max(maxys) + 1, min(minxs), 0)
     # design the cave #
     cave = [['.' for i in range(maxx - minx)] for j in range(maxy - miny)]
-    spout = (500 - minx, 0-miny)
-    cave[spout[1]][spout[0]] = '+'
     for line in rock_lines:
         (s, e) = line
         for x in range(min([s[0], e[0]]), max([s[0], e[0]])+1):
@@ -780,11 +778,6 @@ def puzzle_14_1():
         if not end_of_game:
             cave[fsp[1]][fsp[0]] = 'o'
             c += 1
-    # draw the cave #
-    #for row in cave:
-    #    for col in row:
-    #        print(col, end="")
-    #    print()
     return c
 
 def puzzle_14_2():
@@ -807,8 +800,6 @@ def puzzle_14_2():
     maxx = 500+int(maxw/2)+2
     # design the cave #
     cave = [['.' for i in range(maxx - minx)] for j in range(maxy - miny)]
-    #spout = (500 - minx, 0-miny)
-    #cave[spout[1]][spout[0]] = '+'
     for line in rock_lines:
         (s, e) = line
         for x in range(min([s[0], e[0]]), max([s[0], e[0]])+1):
@@ -832,13 +823,70 @@ def puzzle_14_2():
                 break
         cave[fsp[1]][fsp[0]] = 'o'
         c += 1
-    ## draw the cave #
-    #for row in cave:
-    #    for col in row:
-    #        print(col, end="")
-    #    print()
     return c
 
+def puzzle_15_1():
+    with open("15.txt") as fp:
+        data = fp.read().strip().splitlines()
+    check = 2000000
+    sensors = {}
+    for line in data:
+        sens = tuple(map(lambda x: int(x.split("=")[1]), " ".join(line.split()[2:4]).rstrip(":").split(", ")))
+        beacon = tuple(map(lambda x: int(x.split("=")[1]), " ".join(line.split()[-2:]).split(", ")))
+        sensors[sens] = beacon
+    occupied = [b for a in list(sensors.items()) for b in a]
+    minx = min(occupied, key=lambda x: x[0])[0]
+    miny = min(occupied, key=lambda x: x[1])[1]
+    grid = []
+    mds = {}
+    for s, b in sensors.items():
+        manhattan_distance = abs(s[0]-b[0]) + abs(s[1]-b[1])
+        mds[s] = manhattan_distance
+    for s, md in mds.items():
+        j = check - miny
+        if abs(s[1] - j) > md:
+            continue
+        for i in range(s[0]-md, s[0]+md+1):
+            if abs(s[0] - i) + abs(s[1] - j) <= md:
+                if (i-minx, check) not in occupied:
+                    grid.append(i-minx)
+    return len(set(grid))
+
+def puzzle_15_2():
+    with open("15.txt") as fp:
+        data = fp.read().strip().splitlines()
+    min_coord = 0
+    max_coord = 4000000
+    mds = {}
+    for line in data:
+        s = tuple(map(lambda x: int(x.split("=")[1]), " ".join(line.split()[2:4]).rstrip(":").split(", ")))
+        b = tuple(map(lambda x: int(x.split("=")[1]), " ".join(line.split()[-2:]).split(", ")))
+        manhattan_distance = abs(s[0]-b[0]) + abs(s[1]-b[1])
+        mds[s] = manhattan_distance
+    for i in range(max_coord + 1):
+        row_overlap = []
+        for k, v in mds.items():
+            offset = abs(i - k[1])
+            if offset > v:
+                continue
+            row_width = (abs(v - offset)) * 2 + 1
+            left_edge = k[0] - int(row_width / 2)
+            right_edge = k[0] + int(row_width / 2)
+            row_overlap += [(left_edge, right_edge)]
+        row_overlap = sorted(row_overlap, key=lambda x: x[0])
+        for r in range(len(row_overlap)-1):
+            if row_overlap[r][1] < row_overlap[r+1][0]:
+                r_min = row_overlap[0][0]
+                r_max = row_overlap[0][1]
+                for rp in range(1, len(row_overlap)):
+                    if row_overlap[rp][0] <= r_max and row_overlap[rp][1] > r_max:
+                        r_max = row_overlap[rp][1]
+                        if r_max >= max_coord:
+                            break
+                else:
+                    if r_max < max_coord:
+                        return (r_max + 1) * 4000000 + i
+                continue
 
 def main():
     print(puzzle_1_1())
@@ -869,6 +917,8 @@ def main():
     print(puzzle_13_2())
     print(puzzle_14_1())
     print(puzzle_14_2())
+    print(puzzle_15_1())
+    print(puzzle_15_2())
 
 
 if __name__ == '__main__':

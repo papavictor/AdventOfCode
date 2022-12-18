@@ -855,7 +855,6 @@ def puzzle_15_1():
 def puzzle_15_2():
     with open("15.txt") as fp:
         data = fp.read().strip().splitlines()
-    min_coord = 0
     max_coord = 4000000
     mds = {}
     for line in data:
@@ -888,6 +887,53 @@ def puzzle_15_2():
                         return (r_max + 1) * 4000000 + i
                 continue
 
+def puzzle_16_1():
+    round_count = 30
+    valves = {}
+    tunnels = {}
+    memoization_score = {}
+    open_valves = []
+    with open("16.txt") as fp:
+        data = fp.read().strip().splitlines()
+    for line in data:
+        v = line.split()[1]
+        valves[v] = int(line.split(";")[0].split("=")[1])
+        tunnels[v] = list(map(lambda x: x.strip(","), line.split()[9:]))
+    def _dfs(cur_pos, count):
+        loc_score = 0
+        max_child_score = 0
+        if cur_pos.endswith("o"):
+            loc_score += (count * valves[cur_pos[:2]])
+            open_valves.append(cur_pos[:2])
+        count -= 1
+        if count == 0:
+            if cur_pos.endswith('o'):
+                return valves[cur_pos[:2]]
+            return 0
+        children = tunnels[cur_pos[:2]]
+        if cur_pos[:2] not in open_valves and valves[cur_pos]:
+            children = ["%so" % cur_pos] + children
+        for child in children:
+            if "".join([child, str(count-1), *sorted(open_valves)]) in memoization_score:
+                score = memoization_score["".join([child, str(count-1), *sorted(open_valves)])]
+            else:
+                score = _dfs(child, count)
+            if score > max_child_score:
+                max_child_score = score
+            if child.endswith("o"):
+                open_valves.pop(-1)
+        loc_score += max_child_score
+        memoization_score["".join([cur_pos, str(count), *sorted(open_valves)])] = loc_score
+        return loc_score
+    return _dfs("AA", round_count)
+
+def puzzle_16_2():
+    with open("16.test.txt") as fp:
+        data = fp.read().strip().splitlines()
+    for line in data:
+        print(line)
+    return 0
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -919,6 +965,8 @@ def main():
     print(puzzle_14_2())
     print(puzzle_15_1())
     print(puzzle_15_2())
+    print(puzzle_16_1())
+    #print(puzzle_16_2())
 
 
 if __name__ == '__main__':

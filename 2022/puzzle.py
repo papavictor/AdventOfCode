@@ -934,6 +934,66 @@ def puzzle_16_2():
         print(line)
     return 0
 
+def puzzle_17_1():
+    with open("17.txt") as fp:
+        data = list(fp.read().strip())
+    grid = ['-------']
+    blocks = ["@@@@", ".@.\n@@@\n.@.", "..@\n..@\n@@@", "@\n@\n@\n@", "@@\n@@"]
+    for count in range(2022):
+        block = blocks[count % len(blocks)]
+        nbotb = []
+        for line in block.splitlines():
+            nbotb.append(f'..{line:5}'.replace(" ", "."))
+        nbotb += ['.......'  for j in range(3)]
+        grid = nbotb + grid
+        can_move_down = True
+        while can_move_down:
+            move = data.pop(0)
+            data.append(move)
+            for line in grid:
+                if "@" in line:
+                    if move == '<' and line.index('@') > 0 and line[line.index('@')-1] == '.':
+                        continue
+                    elif move == '>' and line[::-1].index('@') > 0 and line[::-1][line[::-1].index('@')-1] == '.':
+                        continue
+                    else:
+                        break
+            else:
+                for line in range(len(grid)):
+                    if '@' in grid[line]:
+                        if move == '<':
+                            for c in range(len(grid[line])):
+                                if grid[line][c] == '@':
+                                    grid[line] = grid[line][:c-1] + '@.' + grid[line][c+1:]
+                        elif move == '>':
+                            for c in range(len(grid[line])-2, -1, -1):
+                                if grid[line][c] == '@':
+                                    grid[line] = grid[line][:c] + '.@' + grid[line][c+2:]
+            for line in range(len(grid)):
+                for c in range(len(grid[line])):
+                    if grid[line][c] == '@':
+                        if grid[line+1][c] == '.' or grid[line+1][c] == '@':
+                            continue
+                        else:
+                            can_move_down = False
+                            break
+                else:
+                    continue
+            if can_move_down:
+                for line in range(len(grid)-2, -1, -1):
+                    for c in range(len(grid[line])):
+                        if grid[line][c] == '@':
+                            grid[line+1] = grid[line+1][:c] + '@' + grid[line+1][c+1:]
+                            grid[line] = grid[line][:c] + '.' + grid[line][c+1:]
+            else:
+                for line in range(len(grid)):
+                    if '@' in grid[line]:
+                        grid[line] = grid[line].replace("@", "#")
+                break
+            if grid[0].count(".") == 7:
+                grid.pop(0)
+    return len(grid) - 1
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -967,6 +1027,7 @@ def main():
     print(puzzle_15_2())
     print(puzzle_16_1())
     #print(puzzle_16_2())
+    print(puzzle_17_1())
 
 
 if __name__ == '__main__':

@@ -994,6 +994,86 @@ def puzzle_17_1():
                 grid.pop(0)
     return len(grid) - 1
 
+def puzzle_21_1():
+    with open("21.txt") as fp:
+        data = fp.read().strip().splitlines()
+    monkeys = {}
+    for line in data:
+        m = line.split(":")[0]
+        op = line.split(": ")[1]
+        if op.isnumeric():
+            monkeys[m] = int(op)
+        else:
+            monkeys[m] = op
+    def _sum_monks(m):
+        if type(monkeys[m]) == int:
+            return monkeys[m]
+        else:
+            ms = monkeys[m].split()
+            if ms[1] == '*':
+                return int(_sum_monks(ms[0])) * int(_sum_monks(ms[2]))
+            elif ms[1] == '+':
+                return int(_sum_monks(ms[0])) + int(_sum_monks(ms[2]))
+            elif ms[1] == '/':
+                return int(_sum_monks(ms[0])) / int(_sum_monks(ms[2]))
+            elif ms[1] == '-':
+                return int(_sum_monks(ms[0])) - int(_sum_monks(ms[2]))
+    return _sum_monks("root")
+
+def puzzle_21_2():
+    with open("21.txt") as fp:
+        data = fp.read().strip().splitlines()
+    monkeys = {}
+    for line in data:
+        m = line.split(":")[0]
+        op = line.split(": ")[1]
+        if op.isnumeric():
+            monkeys[m] = int(op)
+        else:
+            monkeys[m] = op
+    def _sum_monks(m, i):
+        if type(monkeys[m]) == int:
+            if m == 'humn':
+                return i
+            return monkeys[m]
+        else:
+            ms = monkeys[m].split()
+            if ms[1] == '*':
+                return int(_sum_monks(ms[0], i)) * int(_sum_monks(ms[2], i))
+            elif ms[1] == '+':
+                return int(_sum_monks(ms[0], i)) + int(_sum_monks(ms[2], i))
+            elif ms[1] == '/':
+                return int(_sum_monks(ms[0], i)) / int(_sum_monks(ms[2], i))
+            elif ms[1] == '-':
+                return int(_sum_monks(ms[0], i)) - int(_sum_monks(ms[2], i))
+    i = 1
+    switch_count = 0
+    plus = True
+    while True:
+        if int(_sum_monks(monkeys['root'].split()[0], i)) > int(_sum_monks(monkeys['root'].split()[2], i)):
+            i *= 10
+        else:
+            switch_count += 1
+            break
+    while True:
+        a = int(_sum_monks(monkeys['root'].split()[0], i))
+        b = int(_sum_monks(monkeys['root'].split()[2], i))
+        if a < b:
+            if plus:
+                switch_count += 1
+                plus = False
+            i -= int(i/10**switch_count)
+        elif a > b:
+            if not plus:
+                switch_count += 1
+                plus = True
+            i += int(i/10**switch_count)
+        elif a == b:
+            break
+    while _sum_monks(monkeys['root'].split()[0], i) == _sum_monks(monkeys['root'].split()[2], i):
+        i -= 1
+    return i+1
+
 def main():
     print(puzzle_1_1())
     print(puzzle_1_2())
@@ -1026,8 +1106,10 @@ def main():
     print(puzzle_15_1())
     print(puzzle_15_2())
     print(puzzle_16_1())
-    #print(puzzle_16_2())
+    print(puzzle_16_2())
     print(puzzle_17_1())
+    print(puzzle_21_1())
+    print(puzzle_21_2())
 
 
 if __name__ == '__main__':

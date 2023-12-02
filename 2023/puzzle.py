@@ -74,7 +74,6 @@ def puzzle_2_1():
 def puzzle_2_2():
     with open("2.txt") as fp:
         data = fp.read().strip().splitlines()
-    allowed = {"red": 12, "green": 13, "blue": 14}
     count = 0
     for line in data:
         (game, games) = line.split(":")

@@ -87,11 +87,110 @@ def puzzle_2_2():
         count += product
     return count
 
+def puzzle_3_1():
+    with open("3.txt") as fp:
+        data = fp.read().strip().splitlines()
+    parts = []
+    for line in range(len(data)):
+        buf = ""
+        adj_sqrs = []
+        for c in range(len(data[line])):
+            if data[line][c].isdigit():
+                buf += data[line][c]
+                if line > 0:
+                    if c > 0:
+                        adj_sqrs.append((line-1, c-1))
+                    adj_sqrs.append((line-1, c))
+                    if c < len(data[line])-2:
+                        adj_sqrs.append((line-1, c+1))
+                if c > 0:
+                    adj_sqrs.append((line, c-1))
+                if c < len(data[line])-2:
+                    adj_sqrs.append((line, c+1))
+                if line < len(data) - 1:
+                    if c > 0:
+                        adj_sqrs.append((line+1, c-1))
+                    adj_sqrs.append((line+1, c))
+                    if c < len(data[line]) - 1:
+                        adj_sqrs.append((line+1, c+1))
+            elif buf:
+                for s in set(adj_sqrs):
+                    if data[s[0]][s[1]] != "." and not data[s[0]][s[1]].isdigit():
+                        parts.append(int(buf))
+                        break
+                adj_sqrs = []
+                buf = ""
+            if c == len(data[line]) - 1:
+                for s in adj_sqrs:
+                    if data[s[0]][s[1]] != "." and not data[s[0]][s[1]].isdigit():
+                        parts.append(int(buf))
+                        break
+                adj_sqrs = []
+                buf = ""
+    return sum(parts)
+
+def puzzle_3_2():
+    with open("3.txt") as fp:
+        data = fp.read().strip().splitlines()
+    parts = []
+    all_gears = {}
+    for line in range(len(data)):
+        buf = ""
+        adj_sqrs = []
+        for c in range(len(data[line])):
+            if data[line][c].isdigit():
+                buf += data[line][c]
+                if line > 0:
+                    if c > 0:
+                        adj_sqrs.append((line-1, c-1))
+                    adj_sqrs.append((line-1, c))
+                    if c < len(data[line])-2:
+                        adj_sqrs.append((line-1, c+1))
+                if c > 0:
+                    adj_sqrs.append((line, c-1))
+                if c < len(data[line])-2:
+                    adj_sqrs.append((line, c+1))
+                if line < len(data) - 1:
+                    if c > 0:
+                        adj_sqrs.append((line+1, c-1))
+                    adj_sqrs.append((line+1, c))
+                    if c < len(data[line]) - 1:
+                        adj_sqrs.append((line+1, c+1))
+            elif buf:
+                for s in adj_sqrs:
+                    if data[s[0]][s[1]] == "*":
+                        parts.append(int(buf))
+                        if s in all_gears:
+                            if int(buf) not in all_gears[s]:
+                                all_gears[s].append(int(buf))
+                        else:
+                            all_gears[s] = [int(buf)]
+                adj_sqrs = []
+                buf = ""
+            if c == len(data[line]) - 1:
+                for s in adj_sqrs:
+                    if data[s[0]][s[1]] == "*":
+                        parts.append(int(buf))
+                        if s in all_gears:
+                            if int(buf) not in all_gears[s]:
+                                all_gears[s].append(int(buf))
+                        else:
+                            all_gears[s] = [int(buf)]
+                adj_sqrs = []
+                buf = ""
+    total = 0
+    for g in all_gears:
+        if len(all_gears[g]) == 2:
+            total += math.prod(all_gears[g])
+    return total
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
     print(f"Puzzle 2, part 1: {puzzle_2_1()}")
     print(f"Puzzle 2, part 2: {puzzle_2_2()}")
+    print(f"Puzzle 3, part 1: {puzzle_3_1()}")
+    print(f"Puzzle 3, part 2: {puzzle_3_2()}")
 
 if __name__ == '__main__':
     main()

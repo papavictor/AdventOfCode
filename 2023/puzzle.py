@@ -184,6 +184,48 @@ def puzzle_3_2():
             total += math.prod(all_gears[g])
     return total
 
+def puzzle_4_1():
+    with open("4.txt") as fp:
+        data = fp.read().strip().splitlines()
+    score = 0
+    for line in data:
+        card_score = 0
+        winning_numbers = line.split(":")[1].split("|")[0].strip().split(" ")
+        my_numbers = line.split("|")[1].strip().split(" ")
+        while '' in my_numbers:
+            my_numbers.remove('')
+        while '' in winning_numbers:
+            winning_numbers.remove('')
+        winners = set(winning_numbers).intersection(set(my_numbers))
+        card_score = 2**(len(winners)-1)
+        score += int(card_score)
+    return score
+
+def puzzle_4_2():
+    with open("4.txt") as fp:
+        data = fp.read().strip().splitlines()
+    copies = {}
+    for line in data:
+        card_num = int("".join(line.split(":")[0].split(" ")[1:]).strip())
+        if card_num not in copies:
+            copies[card_num] = 1
+        else:
+            copies[card_num] += 1
+        winning_numbers = line.split(":")[1].split("|")[0].strip().split(" ")
+        my_numbers = line.split("|")[1].strip().split(" ")
+        while '' in my_numbers:
+            my_numbers.remove('')
+        while '' in winning_numbers:
+            winning_numbers.remove('')
+        winners = set(winning_numbers).intersection(set(my_numbers))
+        for i in range(copies[card_num]):
+            for j in range(card_num+1, card_num+len(winners)+1):
+                if j not in copies:
+                    copies[j] = 1
+                else:
+                    copies[j] += 1
+    return sum(copies.values())
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -191,6 +233,8 @@ def main():
     print(f"Puzzle 2, part 2: {puzzle_2_2()}")
     print(f"Puzzle 3, part 1: {puzzle_3_1()}")
     print(f"Puzzle 3, part 2: {puzzle_3_2()}")
+    print(f"Puzzle 4, part 1: {puzzle_4_1()}")
+    print(f"Puzzle 4, part 2: {puzzle_4_2()}")
 
 if __name__ == '__main__':
     main()

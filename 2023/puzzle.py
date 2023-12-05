@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import math
+import re
 
 def puzzle_1_1():
     with open("1.txt") as fp:
@@ -226,15 +227,128 @@ def puzzle_4_2():
                     copies[j] += 1
     return sum(copies.values())
 
+def puzzle_5_1():
+    with open("5.txt") as fp:
+        data = fp.read().strip().splitlines()
+    seeds = list(map(int, data[0].split(":")[1].strip().split()))
+    maps = {}
+    print(seeds)
+    query = "([a-z]+-to-[a-z]+)\ map:\n(([0-9\ ]+\n?)+\n?)"
+    print(dir(re))
+    parsed = re.findall(query, "\n".join(data[1:]))
+    print(parsed)
+    for m in parsed:
+        maps[m[0]] = list(map(lambda x: list(map(int, x.split())), m[1].strip().splitlines()))
+        print(m[0], m[1])
+    print(maps)
+    min_loc = 9999999999
+    for s in seeds:
+        print(f"======seed: {s}======")
+        cur_word = "seed"
+        while cur_word != "location":
+            print(f"---{cur_word=}---")
+            for m in maps:
+                if m.startswith(f"{cur_word}-to-"):
+                    dest_word = re.match(f"{cur_word}-to-([a-z]+)", m).groups()[0]
+                    for c in maps[m]:
+                        if c[1] <= s <= c[1]+c[2]-1:
+                            print(f"{c[1]} <= {s} <= {c[1]}+{c[2]}")
+                            print(f"dest_num = {c[0]}+({s}-{c[1]})")
+                            dest_num = c[0]+(s-c[1])
+                            break
+                    else:
+                        dest_num = s
+                    print(f"{s=}, {dest_word=}, {dest_num=}")
+            cur_word = dest_word
+            s = dest_num
+        if s < min_loc:
+            min_loc = s
+    return min_loc
+
+def puzzle_5_2():
+    with open("5.txt") as fp:
+        data = fp.read().strip().splitlines()
+    sl = list(map(int, data[0].split(":")[1].strip().split()))
+    maps = {}
+    query = "([a-z]+-to-[a-z]+)\ map:\n(([0-9\ ]+\n?)+\n?)"
+    parsed = re.findall(query, "\n".join(data[1:]))
+    for m in parsed:
+        maps[m[0]] = list(map(lambda x: list(map(int, x.split())), m[1].strip().splitlines()))
+    min_loc = 0
+    for s in range(0, len(sl), 2):
+        distance_from_end = -1
+        for s2 in range(sl[s], sl[s]+sl[s+1]):
+            print(f"======seed: {s2}======")
+            cur_word = "seed"
+            seed = s2
+            while cur_word != "location":
+                for m in maps:
+                    if m.startswith(f"{cur_word}-to-"):
+                        dest_word = re.match(f"{cur_word}-to-([a-z]+)", m).groups()[0]
+                        for c in maps[m]:
+                            if c[1] <= s2 <= c[1]+c[2]-1:
+                                #print(f"{c=}, {s2=}")
+                                #print(f"distance from end: {(c[1] + c[2]) - s2}")
+                                dest_num = c[0]+(s2-c[1])
+                                if distance_from_end == -1 or (c[1] + c[2] - s2) < distance_from_end:
+                                    distance_from_end = c[1] + c[2] - s2
+                                #s2 += distance_from_end-1
+                                print(f"{dest_word}={dest_num}, {distance_from_end=}, next downgrade at {seed+distance_from_end}")
+                                break
+                        else:
+                            dest_num = s2
+                cur_word = dest_word
+                s2 = dest_num
+            break
+        if min_loc == 0 or dest_num < min_loc:
+            min_loc = dest_num
+        s2 = seed+distance_from_end
+        #print(s2)
+        print(f"{min_loc=}")
+        print(f"======seed: {s2}======")
+        cur_word = "seed"
+        seed = s2
+        while cur_word != "location":
+            for m in maps:
+                if m.startswith(f"{cur_word}-to-"):
+                    dest_word = re.match(f"{cur_word}-to-([a-z]+)", m).groups()[0]
+                    for c in maps[m]:
+                        if c[1] <= s2 <= c[1]+c[2]-1:
+                            #print(f"{c[1]} <= {s} <= {c[1]}+{c[2]}")
+                            #print(f"{c=}, {s2=}")
+                            #print(f"distance from end: {(c[1] + c[2]) - s2}")
+                            dest_num = c[0]+(s2-c[1])
+                            print(f"{dest_word}={dest_num}")
+                            #if distance_from_end == -1 or (c[1] + c[2] - s2) < distance_from_end:
+                            #    distance_from_end = c[1] + c[2] - s2
+                            #s2 += distance_from_end-1
+                            #print(f"{distance_from_end=}, {s2=}, next downgrade at {seed+distance_from_end}")
+                            break
+                    else:
+                        dest_num = s2
+                    #print(f"{dest_word}={dest_num}")
+            cur_word = dest_word
+            s2 = dest_num
+        #break
+        #print(f"{seed=}, {cur_word}={s2}")
+        if s2 < min_loc:
+            min_loc = s2
+        elif min_loc == 0:
+            min_loc = s2
+        print(f"{min_loc=}")
+    return min_loc
+
 def main():
-    print(f"Puzzle 1, part 1: {puzzle_1_1()}")
-    print(f"Puzzle 1, part 2: {puzzle_1_2()}")
-    print(f"Puzzle 2, part 1: {puzzle_2_1()}")
-    print(f"Puzzle 2, part 2: {puzzle_2_2()}")
-    print(f"Puzzle 3, part 1: {puzzle_3_1()}")
-    print(f"Puzzle 3, part 2: {puzzle_3_2()}")
-    print(f"Puzzle 4, part 1: {puzzle_4_1()}")
-    print(f"Puzzle 4, part 2: {puzzle_4_2()}")
+    #print(f"Puzzle 1, part 1: {puzzle_1_1()}")
+    #print(f"Puzzle 1, part 2: {puzzle_1_2()}")
+    #print(f"Puzzle 2, part 1: {puzzle_2_1()}")
+    #print(f"Puzzle 2, part 2: {puzzle_2_2()}")
+    #print(f"Puzzle 3, part 1: {puzzle_3_1()}")
+    #print(f"Puzzle 3, part 2: {puzzle_3_2()}")
+    #print(f"Puzzle 4, part 1: {puzzle_4_1()}")
+    #print(f"Puzzle 4, part 2: {puzzle_4_2()}")
+    #print(f"Puzzle 5, part 1: {puzzle_5_1()}")
+    print(f"Puzzle 5, part 2: {puzzle_5_2()}")
 
 if __name__ == '__main__':
     main()

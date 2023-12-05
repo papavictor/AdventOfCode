@@ -267,29 +267,28 @@ def puzzle_5_2():
     min_loc = 0
     for s in range(0, len(sl), 2):
         distance_from_end = -1
-        for s2 in range(sl[s], sl[s]+sl[s+1]):
-            cur_word = "seed"
-            seed = s2
-            while cur_word != "location":
-                for m in maps:
-                    if m.startswith(f"{cur_word}-to-"):
-                        dest_word = re.match(f"{cur_word}-to-([a-z]+)", m).groups()[0]
-                        for c in maps[m]:
-                            if c[1] <= s2 <= c[1]+c[2]-1:
-                                dest_num = c[0]+(s2-c[1])
-                                if distance_from_end == -1 or (c[1] + c[2] - s2) < distance_from_end:
-                                    distance_from_end = c[1] + c[2] - s2
-                                break
-                        else:
-                            dest_num = s2
-                cur_word = dest_word
-                s2 = dest_num
-            break
+        seed = sl[s]
+        s2 = sl[s]
+        cur_word = "seed"
+        while cur_word != "location":
+            for m in maps:
+                if m.startswith(f"{cur_word}-to-"):
+                    dest_word = re.match(f"{cur_word}-to-([a-z]+)", m).groups()[0]
+                    for c in maps[m]:
+                        if c[1] <= s2 <= c[1]+c[2]-1:
+                            dest_num = c[0]+(s2-c[1])
+                            if distance_from_end == -1 or (c[1] + c[2] - s2) < distance_from_end:
+                                distance_from_end = c[1] + c[2] - s2
+                            break
+                    else:
+                        dest_num = s2
+            cur_word = dest_word
+            s2 = dest_num
         if min_loc == 0 or dest_num < min_loc:
             min_loc = dest_num
         s2 = seed+distance_from_end
-        cur_word = "seed"
         seed = s2
+        cur_word = "seed"
         while cur_word != "location":
             for m in maps:
                 if m.startswith(f"{cur_word}-to-"):

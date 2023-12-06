@@ -307,6 +307,35 @@ def puzzle_5_2():
             min_loc = s2
     return min_loc
 
+def puzzle_6_1():
+    with open("6.txt") as fp:
+        data = fp.read().strip().splitlines()
+    times = list(map(int, data[0].split(":")[1].strip().split()))
+    distances = list(map(int, data[1].split(":")[1].strip().split()))
+    wins = {}
+    for i in range(len(times)):
+        wins[times[i]] = []
+        for j in range(times[i]):
+            ttm = times[i] - j
+            dm = j * ttm
+            if dm > distances[i]:
+                wins[times[i]].append(j)
+    prod = math.prod([len(x) for x in wins.values()])
+    return prod
+
+def puzzle_6_2():
+    with open("6.txt") as fp:
+        data = fp.read().strip().splitlines()
+    time = int("".join(data[0].split(":")[1].strip().split()))
+    distance = int("".join(data[1].split(":")[1].strip().split()))
+    wins = []
+    for i in range(time):
+        ttm = time - i
+        dm = i * ttm
+        if dm > distance:
+            wins.append(i)
+    return len(wins)
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -318,6 +347,8 @@ def main():
     print(f"Puzzle 4, part 2: {puzzle_4_2()}")
     print(f"Puzzle 5, part 1: {puzzle_5_1()}")
     print(f"Puzzle 5, part 2: {puzzle_5_2()}")
+    print(f"Puzzle 6, part 1: {puzzle_6_1()}")
+    print(f"Puzzle 6, part 2: {puzzle_6_2()}")
 
 if __name__ == '__main__':
     main()

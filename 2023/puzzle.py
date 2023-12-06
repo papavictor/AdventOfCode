@@ -219,12 +219,11 @@ def puzzle_4_2():
         while '' in winning_numbers:
             winning_numbers.remove('')
         winners = set(winning_numbers).intersection(set(my_numbers))
-        for i in range(copies[card_num]):
-            for j in range(card_num+1, card_num+len(winners)+1):
-                if j not in copies:
-                    copies[j] = 1
-                else:
-                    copies[j] += 1
+        for j in range(card_num+1, card_num+len(winners)+1):
+            if j not in copies:
+                copies[j] = copies[card_num]
+            else:
+                copies[j] += copies[card_num]
     return sum(copies.values())
 
 def puzzle_5_1():

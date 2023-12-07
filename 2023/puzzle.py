@@ -335,19 +335,132 @@ def puzzle_6_2():
             wins.append(i)
     return len(wins)
 
+def puzzle_7_1():
+    def _sorter(i):
+        print(i)
+        s = {"A":"a", "K":"b", "Q":"c", "J":"d", "T":"e", "9":"f", "8":"g", "7":"h", "6":"i", "5":"j", "4":"k", "3":"l", "2":"m"}
+        sn = f"{s[i[0]]}{s[i[1]]}{s[i[2]]}{s[i[3]]}{s[i[4]]}"
+        print(sn)
+        return(sn)
+    with open("7.test.txt") as fp:
+        data = fp.read().strip().splitlines()
+    
+    hands_rank = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}
+    bets = {}
+    sorted_hands = []
+    for line in data:
+        (hand, bet) = line.split()
+        bets[hand] = int(bet)
+        hc = {}
+        for card in hand:
+            if card in hc:
+                hc[card] += 1
+            else:
+                hc[card] = 1
+        print(hc)
+        if 5 in hc.values():
+            hands_rank[1].append(hand)
+        elif 4 in hc.values():
+            hands_rank[2].append(hand)
+        elif 3 in hc.values():
+            if 2 in hc.values():
+                hands_rank[3].append(hand)
+            else:
+                hands_rank[4].append(hand)
+        elif list(hc.values()).count(2) == 2:
+            hands_rank[5].append(hand)
+        elif 2 in hc.values():
+            hands_rank[6].append(hand)
+        else:
+            hands_rank[7].append(hand)
+    print(hands_rank)
+    for rank in range(1, 8):
+        for hand in sorted(hands_rank[rank], key=_sorter):
+            sorted_hands.append(hand)
+    total_winnings = 0
+    sorted_hands.reverse()
+    for hand in range(len(sorted_hands)):
+        print(f"{sorted_hands[hand]=}, {bets[sorted_hands[hand]]=}, {hand+1=}")
+        total_winnings += bets[sorted_hands[hand]] * (hand+1)
+    return total_winnings
+
+def puzzle_7_2():
+    def _sorter(i):
+        print(i)
+        s = {"A":"a", "K":"b", "Q":"c", "T":"d", "9":"e", "8":"f", "7":"g", "6":"h", "5":"i", "4":"j", "3":"k", "2":"l", "J":"m"}
+        sn = f"{s[i[0]]}{s[i[1]]}{s[i[2]]}{s[i[3]]}{s[i[4]]}"
+        print(sn)
+        return(sn)
+    with open("7.test.txt") as fp:
+        data = fp.read().strip().splitlines()
+
+    hands_rank = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}
+    bets = {}
+    sorted_hands = []
+    for line in data:
+        (hand, bet) = line.split()
+        bets[hand] = int(bet)
+        hc = {}
+        for card in hand:
+            if card in hc:
+                hc[card] += 1
+            else:
+                hc[card] = 1
+        print(hc)
+        if "J" in hc:
+            mv = 0
+            bc = ""
+            for k,v in hc.items():
+                if k == "J":
+                    continue
+                if v > mv:
+                    mv = v
+                    bc = k
+            print(f"Best card = {bc}")
+            if bc:
+                hc[bc] += hc["J"]
+                del hc["J"]
+        if 5 in hc.values():
+            hands_rank[1].append(hand)
+        elif 4 in hc.values():
+            hands_rank[2].append(hand)
+        elif 3 in hc.values():
+            if 2 in hc.values():
+                hands_rank[3].append(hand)
+            else:
+                hands_rank[4].append(hand)
+        elif list(hc.values()).count(2) == 2:
+            hands_rank[5].append(hand)
+        elif 2 in hc.values():
+            hands_rank[6].append(hand)
+        else:
+            hands_rank[7].append(hand)
+    print(hands_rank)
+    for rank in range(1, 8):
+        for hand in sorted(hands_rank[rank], key=_sorter):
+            sorted_hands.append(hand)
+    total_winnings = 0
+    sorted_hands.reverse()
+    for hand in range(len(sorted_hands)):
+        print(f"{sorted_hands[hand]=}, {bets[sorted_hands[hand]]=}, {hand+1=}")
+        total_winnings += bets[sorted_hands[hand]] * (hand+1)
+    return total_winnings
+
 def main():
-    print(f"Puzzle 1, part 1: {puzzle_1_1()}")
-    print(f"Puzzle 1, part 2: {puzzle_1_2()}")
-    print(f"Puzzle 2, part 1: {puzzle_2_1()}")
-    print(f"Puzzle 2, part 2: {puzzle_2_2()}")
-    print(f"Puzzle 3, part 1: {puzzle_3_1()}")
-    print(f"Puzzle 3, part 2: {puzzle_3_2()}")
-    print(f"Puzzle 4, part 1: {puzzle_4_1()}")
-    print(f"Puzzle 4, part 2: {puzzle_4_2()}")
-    print(f"Puzzle 5, part 1: {puzzle_5_1()}")
-    print(f"Puzzle 5, part 2: {puzzle_5_2()}")
-    print(f"Puzzle 6, part 1: {puzzle_6_1()}")
-    print(f"Puzzle 6, part 2: {puzzle_6_2()}")
+    #print(f"Puzzle 1, part 1: {puzzle_1_1()}")
+    #print(f"Puzzle 1, part 2: {puzzle_1_2()}")
+    #print(f"Puzzle 2, part 1: {puzzle_2_1()}")
+    #print(f"Puzzle 2, part 2: {puzzle_2_2()}")
+    #print(f"Puzzle 3, part 1: {puzzle_3_1()}")
+    #print(f"Puzzle 3, part 2: {puzzle_3_2()}")
+    #print(f"Puzzle 4, part 1: {puzzle_4_1()}")
+    #print(f"Puzzle 4, part 2: {puzzle_4_2()}")
+    #print(f"Puzzle 5, part 1: {puzzle_5_1()}")
+    #print(f"Puzzle 5, part 2: {puzzle_5_2()}")
+    #print(f"Puzzle 6, part 1: {puzzle_6_1()}")
+    #print(f"Puzzle 6, part 2: {puzzle_6_2()}")
+    print(f"Puzzle 7, part 1: {puzzle_7_1()}")
+    print(f"Puzzle 7, part 2: {puzzle_7_2()}")
 
 if __name__ == '__main__':
     main()

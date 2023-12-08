@@ -433,6 +433,64 @@ def puzzle_7_2():
         total_winnings += bets[sorted_hands[hand]] * (hand+1)
     return total_winnings
 
+def puzzle_8_1():
+    with open("8.txt") as fp:
+        data = fp.read().strip().splitlines()
+    instructions = [e for e in data[0]]
+    network = {}
+    for line in data[2:]:
+        network[line.split("=")[0].strip()] = list(map(lambda x: x.strip(), line.split("=")[1].strip(" ()").split(",")))
+    node = "AAA"
+    counter = 0
+    while node != "ZZZ":
+        for i in instructions:
+            if i == "L":
+                node = network[node][0]
+            else:
+                node = network[node][1]
+            counter += 1
+    return counter
+
+def puzzle_8_2():
+    with open("8.txt") as fp:
+        data = fp.read().strip().splitlines()
+    instructions = [e for e in data[0]]
+    paths = []
+    network = {}
+    for line in data[2:]:
+        start_point = line.split("=")[0].strip()
+        [endpoint_L, endpoint_R] = list(map(lambda x: x.strip(), line.split("=")[1].strip(" ()").split(",")))
+        network[start_point] = [endpoint_L, endpoint_R]
+        if start_point.endswith("A"):
+            paths.append(start_point)
+    counter = 0
+    counts = []
+    for p in paths:
+        count = 0
+        pos = p
+        while not pos.endswith("Z"):
+            i = instructions[count%len(instructions)]
+            if i == "L":
+                pos = network[pos][0]
+            else:
+                pos = network[pos][1]
+            count += 1
+        counts.append(count)
+    divisors = []
+    for c in counts:
+        divs = []
+        for n in range(2, int(math.sqrt(c))):
+            if (c / n).is_integer():
+                divs += [n, int(c/n)]
+        divisors.append(list(set(divs)))
+    gcd = 0
+    for d in divisors[0]:
+        for d2 in divisors:
+            if d in d2 and d > gcd:
+                gcd = d
+    lcm = int(math.prod([e/gcd for e in counts]) * gcd)
+    return lcm
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -448,6 +506,8 @@ def main():
     print(f"Puzzle 6, part 2: {puzzle_6_2()}")
     print(f"Puzzle 7, part 1: {puzzle_7_1()}")
     print(f"Puzzle 7, part 2: {puzzle_7_2()}")
+    print(f"Puzzle 8, part 1: {puzzle_8_1()}")
+    print(f"Puzzle 8, part 2: {puzzle_8_2()}")
 
 if __name__ == '__main__':
     main()

@@ -463,7 +463,6 @@ def puzzle_8_2():
         network[start_point] = [endpoint_L, endpoint_R]
         if start_point.endswith("A"):
             paths.append(start_point)
-    counter = 0
     counts = []
     for p in paths:
         count = 0

@@ -490,6 +490,58 @@ def puzzle_8_2():
     lcm = int(math.prod([e/gcd for e in counts]) * gcd)
     return lcm
 
+def puzzle_9_1():
+    with open("9.txt") as fp:
+        data = fp.read().strip().splitlines()
+    sequences = []
+    for line in data:
+        sequences.append(list(map(int, line.split())))
+    total = 0
+    for seq in sequences:
+        history = [seq]
+        h1 = []
+        while not (len(h1) > 0 and h1.count(0) == len(h1)):
+            h1 = []
+            for i in range(len(seq) - 1):
+                diff = seq[i+1] - seq[i]
+                h1.append(diff)
+            history.append(h1)
+            seq = h1
+        for i in range(1, len(history)+1):
+            h2 = history[-i]
+            if h2.count(0) == len(h2):
+                h2.append(0)
+            else:
+                h2.append(h2[-1]+history[-i+1][-1])
+        total += h2[-1]
+    return total
+
+def puzzle_9_2():
+    with open("9.txt") as fp:
+        data = fp.read().strip().splitlines()
+    sequences = []
+    for line in data:
+        sequences.append(list(map(int, line.split())))
+    total = 0
+    for seq in sequences:
+        history = [seq]
+        h1 = []
+        while not (len(h1) > 0 and h1.count(0) == len(h1)):
+            h1 = []
+            for i in range(len(seq) - 1):
+                diff = seq[i+1] - seq[i]
+                h1.append(diff)
+            history.append(h1)
+            seq = h1
+        for i in range(1, len(history)+1):
+            h2 = history[-i]
+            if h2.count(0) == len(h2):
+                h2.insert(0, 0)
+            else:
+                h2.insert(0, h2[0]-history[-i+1][0])
+        total += h2[0]
+    return total
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -507,6 +559,8 @@ def main():
     print(f"Puzzle 7, part 2: {puzzle_7_2()}")
     print(f"Puzzle 8, part 1: {puzzle_8_1()}")
     print(f"Puzzle 8, part 2: {puzzle_8_2()}")
+    print(f"Puzzle 9, part 1: {puzzle_9_1()}")
+    print(f"Puzzle 9, part 2: {puzzle_9_2()}")
 
 if __name__ == '__main__':
     main()

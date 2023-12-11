@@ -327,12 +327,21 @@ def puzzle_6_2():
         data = fp.read().strip().splitlines()
     time = int("".join(data[0].split(":")[1].strip().split()))
     distance = int("".join(data[1].split(":")[1].strip().split()))
-    wins = []
+    wins_l = 0
+    wins_h = 0
     for i in range(time):
         ttm = time - i
         dm = i * ttm
         if dm > distance:
-            wins.append(i)
+            wins_l = i
+            break
+    for i in range(time, wins_l, -1):
+        ttm = time - i
+        dm = i * ttm
+        if dm > distance:
+            wins_h = i
+            break
+    wins = list(range(wins_l, wins_h+1))
     return len(wins)
 
 def puzzle_7_1():
@@ -731,28 +740,28 @@ def puzzle_11_2():
     return sum_distances
 
 def main():
-    print(f"Puzzle 1, part 1: {puzzle_1_1()}")
-    print(f"Puzzle 1, part 2: {puzzle_1_2()}")
-    print(f"Puzzle 2, part 1: {puzzle_2_1()}")
-    print(f"Puzzle 2, part 2: {puzzle_2_2()}")
-    print(f"Puzzle 3, part 1: {puzzle_3_1()}")
-    print(f"Puzzle 3, part 2: {puzzle_3_2()}")
-    print(f"Puzzle 4, part 1: {puzzle_4_1()}")
-    print(f"Puzzle 4, part 2: {puzzle_4_2()}")
-    print(f"Puzzle 5, part 1: {puzzle_5_1()}")
-    print(f"Puzzle 5, part 2: {puzzle_5_2()}")
-    print(f"Puzzle 6, part 1: {puzzle_6_1()}")
+    #print(f"Puzzle 1, part 1: {puzzle_1_1()}")
+    #print(f"Puzzle 1, part 2: {puzzle_1_2()}")
+    #print(f"Puzzle 2, part 1: {puzzle_2_1()}")
+    #print(f"Puzzle 2, part 2: {puzzle_2_2()}")
+    #print(f"Puzzle 3, part 1: {puzzle_3_1()}")
+    #print(f"Puzzle 3, part 2: {puzzle_3_2()}")
+    #print(f"Puzzle 4, part 1: {puzzle_4_1()}")
+    #print(f"Puzzle 4, part 2: {puzzle_4_2()}")
+    #print(f"Puzzle 5, part 1: {puzzle_5_1()}")
+    #print(f"Puzzle 5, part 2: {puzzle_5_2()}")
+    #print(f"Puzzle 6, part 1: {puzzle_6_1()}")
     print(f"Puzzle 6, part 2: {puzzle_6_2()}")
-    print(f"Puzzle 7, part 1: {puzzle_7_1()}")
-    print(f"Puzzle 7, part 2: {puzzle_7_2()}")
-    print(f"Puzzle 8, part 1: {puzzle_8_1()}")
-    print(f"Puzzle 8, part 2: {puzzle_8_2()}")
-    print(f"Puzzle 9, part 1: {puzzle_9_1()}")
-    print(f"Puzzle 9, part 2: {puzzle_9_2()}")
-    print(f"Puzzle 10, part 1: {puzzle_10_1()}")
-    print(f"Puzzle 10, part 2: {puzzle_10_2()}")
-    print(f"Puzzle 11, part 1: {puzzle_11_1()}")
-    print(f"Puzzle 11, part 2: {puzzle_11_2()}")
+    #print(f"Puzzle 7, part 1: {puzzle_7_1()}")
+    #print(f"Puzzle 7, part 2: {puzzle_7_2()}")
+    #print(f"Puzzle 8, part 1: {puzzle_8_1()}")
+    #print(f"Puzzle 8, part 2: {puzzle_8_2()}")
+    #print(f"Puzzle 9, part 1: {puzzle_9_1()}")
+    #print(f"Puzzle 9, part 2: {puzzle_9_2()}")
+    #print(f"Puzzle 10, part 1: {puzzle_10_1()}")
+    #print(f"Puzzle 10, part 2: {puzzle_10_2()}")
+    #print(f"Puzzle 11, part 1: {puzzle_11_1()}")
+    #print(f"Puzzle 11, part 2: {puzzle_11_2()}")
 
 if __name__ == '__main__':
     main()

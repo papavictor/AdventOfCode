@@ -720,19 +720,16 @@ def puzzle_11_2():
     sum_distances = 0
     multiplier = 999999
     compared = []
+    er = [e for e in empty_rows if empty_rows[e]]
+    ec = [e for e in empty_cols if empty_cols[e]]
     for g in galaxies:
         for g2 in galaxies:
             if g == g2:
                 continue
             if [g, g2] in compared:
                 continue
-            tmp_add = 0
-            for i in range(min(galaxies[g][0], galaxies[g2][0]), max(galaxies[g][0], galaxies[g2][0])):
-                if empty_rows[i] == True:
-                    tmp_add += multiplier
-            for j in range(min(galaxies[g][1], galaxies[g2][1]), max(galaxies[g][1], galaxies[g2][1])):
-                if empty_cols[j] == True:
-                    tmp_add += multiplier
+            tmp_add = multiplier * len([e for e in er if min(galaxies[g][0], galaxies[g2][0]) < e < max(galaxies[g][0], galaxies[g2][0])])
+            tmp_add += multiplier * len([e for e in ec if min(galaxies[g][1], galaxies[g2][1]) < e < max(galaxies[g][1], galaxies[g2][1])])
             sum_distances += (abs(galaxies[g][0]-galaxies[g2][0]) + abs(galaxies[g][1]-galaxies[g2][1])) + tmp_add
             compared.append([g2, g])
     return sum_distances

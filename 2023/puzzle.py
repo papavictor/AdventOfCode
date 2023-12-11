@@ -578,13 +578,17 @@ def puzzle_10_1():
         for n in nbs:
             newgrid[n[0]][n[1]] = step
             tnbs = _nbs(n)
-            if tnbs[3][1] >= grid_width or data[tnbs[3][0]][tnbs[3][1]] not in ["7", "J", "-"] or newgrid[tnbs[3][0]][tnbs[3][1]] != '.':
+            if tnbs[3][1] >= grid_width or data[tnbs[3][0]][tnbs[3][1]] not in ["7", "J", "-"] or \
+              newgrid[tnbs[3][0]][tnbs[3][1]] != '.' or data[n[0]][n[1]] not in ["F", "L", "-", "S"]:
                 tnbs.pop(3)
-            if tnbs[2][1] < 0 or data[tnbs[2][0]][tnbs[2][1]] not in ["L", "F", "-"] or newgrid[tnbs[2][0]][tnbs[2][1]] != '.':
+            if tnbs[2][1] < 0 or data[tnbs[2][0]][tnbs[2][1]] not in ["L", "F", "-"] or \
+              newgrid[tnbs[2][0]][tnbs[2][1]] != '.' or data[n[0]][n[1]] not in ["J", "7", "-", "S"]:
                 tnbs.pop(2)
-            if tnbs[1][0] >= grid_height or data[tnbs[1][0]][tnbs[1][1]] not in ["L", "J", "|"] or newgrid[tnbs[1][0]][tnbs[1][1]] != '.':
+            if tnbs[1][0] >= grid_height or data[tnbs[1][0]][tnbs[1][1]] not in ["L", "J", "|"] or \
+              newgrid[tnbs[1][0]][tnbs[1][1]] != '.' or data[n[0]][n[1]] not in ["|", "F", "7", "S"]:
                 tnbs.pop(1)
-            if tnbs[0][0] < 0 or data[tnbs[0][0]][tnbs[0][1]] not in ["F", "7", "|"] or newgrid[tnbs[0][0]][tnbs[0][1]] != '.':
+            if tnbs[0][0] < 0 or data[tnbs[0][0]][tnbs[0][1]] not in ["F", "7", "|"] or \
+              newgrid[tnbs[0][0]][tnbs[0][1]] != '.' or data[n[0]][n[1]] not in ["|", "J", "L", "S"]:
                 tnbs.pop(0)
             nnbs += tnbs
         nbs = nnbs

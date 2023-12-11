@@ -591,12 +591,7 @@ def puzzle_10_1():
     return step
 
 def puzzle_10_2():
-    # < 1031
     def _nbs(p):
-        # nbs[0] = F || 7 || |
-        # nbs[1] = L || J || |
-        # nbs[2] = L || F || -
-        # nbs[3] = 7 || J || -
         [x, y] = p
         nbs = []
         nbs.append([x-1, y])
@@ -614,12 +609,9 @@ def puzzle_10_2():
             sp = [line, data[line].index('S')]
             break
     newgrid = [['.' for e in range(len(data[0]))] for l in data]
-    print(f"{sp=}")
     newgrid[sp[0]][sp[1]] = 0
-    #data[sp[0]].replace("S", "7")
     nbs = _nbs(sp)
     step = 0
-    print(f"{nbs=}")
     if nbs[3][1] > grid_width or data[nbs[3][0]][nbs[3][1]] not in ["7", "J", "-"]:
         nbs.pop(3)
     if nbs[2][1] < 0 or data[nbs[2][0]][nbs[2][1]] not in ["L", "F", "-"]:
@@ -628,18 +620,12 @@ def puzzle_10_2():
         nbs.pop(1)
     if nbs[0][0] < 0 or data[nbs[0][0]][nbs[0][1]] not in ["F", "7", "|"]:
         nbs.pop(0)
-    print(f"{nbs=}")
     while nbs:
         step += 1
-        print(f"{step=}")
         nnbs = []
-        print(f"{nbs=}")
         for n in nbs:
-            # 0 = U, 1 = D, 2 = L, 3 = R
             newgrid[n[0]][n[1]] = step
-            print(f"{n=}")
             tnbs = _nbs(n)
-            print(f"{tnbs=}")
             if tnbs[3][1] >= grid_width or data[tnbs[3][0]][tnbs[3][1]] not in ["7", "J", "-"] or \
               newgrid[tnbs[3][0]][tnbs[3][1]] != '.' or data[n[0]][n[1]] not in ["F", "L", "-", "S"]:
                 tnbs.pop(3)
@@ -648,41 +634,16 @@ def puzzle_10_2():
                 tnbs.pop(2)
             if tnbs[1][0] >= grid_height or data[tnbs[1][0]][tnbs[1][1]] not in ["L", "J", "|"] or \
               newgrid[tnbs[1][0]][tnbs[1][1]] != '.' or data[n[0]][n[1]] not in ["|", "F", "7", "S"]:
-                print(f"popping {tnbs[1]}")
                 tnbs.pop(1)
             if tnbs[0][0] < 0 or data[tnbs[0][0]][tnbs[0][1]] not in ["F", "7", "|"] or \
               newgrid[tnbs[0][0]][tnbs[0][1]] != '.' or data[n[0]][n[1]] not in ["|", "J", "L", "S"]:
                 tnbs.pop(0)
-            print(f"{tnbs=}")
             nnbs += tnbs
-        print(f"{nnbs=}")
         nbs = nnbs
-        #for row in newgrid:
-        #    for col in row:
-        #        print(col, end="")
-        #    print()
-    
-    #def _rc(pos):
-    #    nbs = _nbs(pos)
-    #    for n in nbs:
-    #        if n[0] >= grid_height or n[0] < 0:
-    #            return True
-    #        if n[1] >= grid_width or n[1] < 0:
-    #            return True
-    #        if newgrid[n[0]][n[1]] != '.':
-    #            continue
-    #        if _rc(n):
-    #            newgrid[pos[0]][pos[1]] = "O"
-    #            return True
-    #    return False
     int_count = 0
     for row in range(len(newgrid)):
         for col in range(len(newgrid[row])):
-            #if data[row][col] in ['.', '|', "L", "J"] and (row > 0 and data[row-1][col] in ["7", "F", "|", '.']):
-            #if data[row][col] == '.' or (data[row][col] in ["|", "L", "J"] and (row > 0 and data[row-1][col] not in ["7", "F", "|", "S"])) \
-            #  and row > 0 and col > 0 and row < len(newgrid)-1 and col < len(newgrid[row])-1 :
             if newgrid[row][col] == '.' and row > 0 and col > 0 and row < len(newgrid)-1 and col < len(newgrid[row])-1:
-                print(f"{row=}, {col=} == {data[row][col]=}")
                 count = 0
                 for c in range(col):
                     if data[row][c] in ["S", "L", "J", "|"] and data[row-1][c] in ["S", "7", "F", "|"] \
@@ -691,34 +652,28 @@ def puzzle_10_2():
                 if count % 2:
                     newgrid[row][col] = "I"
                     int_count += 1
-            #elif data[row][col] in ["|", "L", "J"] and (row > 0 and data[row-1][col] not in ["7", "F", "|"]):
-    for row in range(len(newgrid)):
-        for col in range(len(newgrid[row])):
-            #print(f"{newgrid[row][col]:>3} ({data[row][col]})", end="")
-            print(f"{newgrid[row][col]:>3}", end="")
-        print()
     return int_count
 
 def main():
-    #print(f"Puzzle 1, part 1: {puzzle_1_1()}")
-    #print(f"Puzzle 1, part 2: {puzzle_1_2()}")
-    #print(f"Puzzle 2, part 1: {puzzle_2_1()}")
-    #print(f"Puzzle 2, part 2: {puzzle_2_2()}")
-    #print(f"Puzzle 3, part 1: {puzzle_3_1()}")
-    #print(f"Puzzle 3, part 2: {puzzle_3_2()}")
-    #print(f"Puzzle 4, part 1: {puzzle_4_1()}")
-    #print(f"Puzzle 4, part 2: {puzzle_4_2()}")
-    #print(f"Puzzle 5, part 1: {puzzle_5_1()}")
-    #print(f"Puzzle 5, part 2: {puzzle_5_2()}")
-    #print(f"Puzzle 6, part 1: {puzzle_6_1()}")
-    #print(f"Puzzle 6, part 2: {puzzle_6_2()}")
-    #print(f"Puzzle 7, part 1: {puzzle_7_1()}")
-    #print(f"Puzzle 7, part 2: {puzzle_7_2()}")
-    #print(f"Puzzle 8, part 1: {puzzle_8_1()}")
-    #print(f"Puzzle 8, part 2: {puzzle_8_2()}")
-    #print(f"Puzzle 9, part 1: {puzzle_9_1()}")
-    #print(f"Puzzle 9, part 2: {puzzle_9_2()}")
-    #print(f"Puzzle 10, part 1: {puzzle_10_1()}")
+    print(f"Puzzle 1, part 1: {puzzle_1_1()}")
+    print(f"Puzzle 1, part 2: {puzzle_1_2()}")
+    print(f"Puzzle 2, part 1: {puzzle_2_1()}")
+    print(f"Puzzle 2, part 2: {puzzle_2_2()}")
+    print(f"Puzzle 3, part 1: {puzzle_3_1()}")
+    print(f"Puzzle 3, part 2: {puzzle_3_2()}")
+    print(f"Puzzle 4, part 1: {puzzle_4_1()}")
+    print(f"Puzzle 4, part 2: {puzzle_4_2()}")
+    print(f"Puzzle 5, part 1: {puzzle_5_1()}")
+    print(f"Puzzle 5, part 2: {puzzle_5_2()}")
+    print(f"Puzzle 6, part 1: {puzzle_6_1()}")
+    print(f"Puzzle 6, part 2: {puzzle_6_2()}")
+    print(f"Puzzle 7, part 1: {puzzle_7_1()}")
+    print(f"Puzzle 7, part 2: {puzzle_7_2()}")
+    print(f"Puzzle 8, part 1: {puzzle_8_1()}")
+    print(f"Puzzle 8, part 2: {puzzle_8_2()}")
+    print(f"Puzzle 9, part 1: {puzzle_9_1()}")
+    print(f"Puzzle 9, part 2: {puzzle_9_2()}")
+    print(f"Puzzle 10, part 1: {puzzle_10_1()}")
     print(f"Puzzle 10, part 2: {puzzle_10_2()}")
 
 if __name__ == '__main__':

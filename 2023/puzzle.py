@@ -658,6 +658,90 @@ def puzzle_10_2():
                     int_count += 1
     return int_count
 
+def puzzle_11_1():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    sky_map = []
+    for line in data:
+        sky_map.append([e for e in line])
+    empty_rows = dict(zip(range(len(sky_map)), [True for e in range(len(sky_map))]))
+    empty_cols = dict(zip(range(len(sky_map[0])), [True for e in range(len(sky_map[0]))]))
+    for row in range(len(sky_map)):
+        if sky_map[row].count(".") != len(sky_map[row]):
+            empty_rows[row] = False
+        for col in range(len(sky_map[row])):
+            if sky_map[row][col] == '#':
+                empty_cols[col] = False
+    for r in sorted(empty_rows.keys(), reverse=True):
+        if empty_rows[r] == True:
+            sky_map.insert(r, ['.' for e in sky_map[0]])
+    for row in range(len(sky_map)):
+        for col in range(len(sky_map[row]) - 1, -1, -1):
+            if empty_cols[col] == True:
+                print("inserting new col at ", col)
+                sky_map[row].insert(col, '.')
+    count = 0
+    galaxies = {}
+    for row in range(len(sky_map)):
+        for col in range(len(sky_map[row])):
+            if sky_map[row][col] == '#':
+                count += 1
+                sky_map[row][col] = count
+                galaxies[count] = [row, col]
+            #print(sky_map[row][col], end="")
+        #print()
+    #print(empty_rows, empty_cols)
+    #print(galaxies)
+    sum_distances = 0
+    for g in galaxies:
+        for g2 in galaxies:
+            if g == g2:
+                continue
+            sum_distances += (abs(galaxies[g][0]-galaxies[g2][0]) + abs(galaxies[g][1]-galaxies[g2][1]))
+    return int(sum_distances / 2)
+
+def puzzle_11_2():
+    with open("11.txt") as fp:
+        data = fp.read().strip().splitlines()
+    sky_map = []
+    for line in data:
+        sky_map.append([e for e in line])
+    empty_rows = dict(zip(range(len(sky_map)), [True for e in range(len(sky_map))]))
+    empty_cols = dict(zip(range(len(sky_map[0])), [True for e in range(len(sky_map[0]))]))
+    for row in range(len(sky_map)):
+        if sky_map[row].count(".") != len(sky_map[row]):
+            empty_rows[row] = False
+        for col in range(len(sky_map[row])):
+            if sky_map[row][col] == '#':
+                empty_cols[col] = False
+    count = 0
+    galaxies = {}
+    for row in range(len(sky_map)):
+        for col in range(len(sky_map[row])):
+            if sky_map[row][col] == '#':
+                count += 1
+                sky_map[row][col] = count
+                galaxies[count] = [row, col]
+    sum_distances = 0
+    multiplier = 999999
+    compared = []
+    for g in galaxies:
+        for g2 in galaxies:
+            if g == g2:
+                continue
+            if [g, g2] in compared:
+                continue
+            tmp_add = 0
+            for i in range(min(galaxies[g][0], galaxies[g2][0]), max(galaxies[g][0], galaxies[g2][0])):
+                if empty_rows[i] == True:
+                    tmp_add += multiplier
+            for j in range(min(galaxies[g][1], galaxies[g2][1]), max(galaxies[g][1], galaxies[g2][1])):
+                if empty_cols[j] == True:
+                    tmp_add += multiplier
+            sum_distances += (abs(galaxies[g][0]-galaxies[g2][0]) + abs(galaxies[g][1]-galaxies[g2][1])) + tmp_add
+            compared.append([g2, g])
+    return sum_distances
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -679,6 +763,8 @@ def main():
     print(f"Puzzle 9, part 2: {puzzle_9_2()}")
     print(f"Puzzle 10, part 1: {puzzle_10_1()}")
     print(f"Puzzle 10, part 2: {puzzle_10_2()}")
+    print(f"Puzzle 11, part 1: {puzzle_11_1()}")
+    print(f"Puzzle 11, part 2: {puzzle_11_2()}")
 
 if __name__ == '__main__':
     main()

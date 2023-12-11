@@ -341,8 +341,7 @@ def puzzle_6_2():
         if dm > distance:
             wins_h = i
             break
-    wins = list(range(wins_l, wins_h+1))
-    return len(wins)
+    return wins_h + 1 - wins_l
 
 def puzzle_7_1():
     def _sorter(i):

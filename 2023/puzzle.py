@@ -678,7 +678,6 @@ def puzzle_11_1():
     for row in range(len(sky_map)):
         for col in range(len(sky_map[row]) - 1, -1, -1):
             if empty_cols[col] == True:
-                print("inserting new col at ", col)
                 sky_map[row].insert(col, '.')
     count = 0
     galaxies = {}
@@ -688,10 +687,6 @@ def puzzle_11_1():
                 count += 1
                 sky_map[row][col] = count
                 galaxies[count] = [row, col]
-            #print(sky_map[row][col], end="")
-        #print()
-    #print(empty_rows, empty_cols)
-    #print(galaxies)
     sum_distances = 0
     for g in galaxies:
         for g2 in galaxies:

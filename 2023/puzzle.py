@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import itertools
 import math
 import re
 
@@ -738,6 +739,38 @@ def puzzle_11_2():
             compared.append([g2, g])
     return sum_distances
 
+def puzzle_12_1():
+    with open("12.txt") as fp:
+        data = fp.read().strip().splitlines()
+    arr_ct = 0
+    for line in data:
+        order, counts = line.split(" ")
+        counts = list(map(int, counts.split(",")))
+        #print(order, counts)
+        qcount = order.count("?")
+        arrangements = list(itertools.product("#.", repeat=qcount))
+        #print(len(arrangements))
+        for a in arrangements:
+            new_o = order
+            new_ol = list(new_o)
+            ac = 0
+            for c in range(len(new_ol)):
+                if new_ol[c] == '?':
+                    new_ol[c] = a[ac]
+                    ac += 1
+            new_o = "".join(new_ol).split(".")
+            while '' in new_o:
+                new_o.remove('')
+            #print(new_o)
+            if len(new_o) != len(counts):
+                continue
+            for c in range(len(counts)):
+                if counts[c] != len(new_o[c]):
+                    break
+            else:
+                arr_ct += 1
+    return arr_ct
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -761,6 +794,7 @@ def main():
     print(f"Puzzle 10, part 2: {puzzle_10_2()}")
     print(f"Puzzle 11, part 1: {puzzle_11_1()}")
     print(f"Puzzle 11, part 2: {puzzle_11_2()}")
+    print(f"Puzzle 12, part 1: {puzzle_12_1()}")
 
 if __name__ == '__main__':
     main()

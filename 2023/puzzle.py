@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from copy import deepcopy
 import itertools
 import math
 import re
@@ -771,6 +772,122 @@ def puzzle_12_1():
                 arr_ct += 1
     return arr_ct
 
+def puzzle_13_1():
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    pmaps = []
+    rot_pmaps = []
+    pmap_tmp = []
+    for line in data:
+        if not line:
+            pmaps.append(pmap_tmp)
+            pmap_tmp = []
+        else:
+            pmap_tmp.append([e for e in line])
+    pmaps.append(pmap_tmp)
+    for pm in pmaps:
+        #rot_pmaps.append(list(map(list, numpy.rot90(pm, k=3))))
+        rot_pmaps.append([list(x) for x in zip(*pm)])
+    total = 0
+    for pm in range(len(pmaps)):
+        for i in range(len(pmaps[pm])-1):
+            if pmaps[pm][i] == pmaps[pm][i+1]:
+                for j in range(i+1):
+                    if i + j + 1 >= len(pmaps[pm]):
+                        continue
+                    elif pmaps[pm][i-j] != pmaps[pm][i+j+1]:
+                        break
+                else:
+                    total += 100 * (i + 1)
+                    break
+        else:
+            for i in range(len(rot_pmaps[pm])-1):
+                if rot_pmaps[pm][i] == rot_pmaps[pm][i+1]:
+                    for j in range(i+1):
+                        if i + j + 1 >= len(rot_pmaps[pm]):
+                            continue
+                        elif rot_pmaps[pm][i-j] != rot_pmaps[pm][i+j+1]:
+                            break
+                    else:
+                        total += i + 1
+                        break
+    return total
+
+def puzzle_13_2():
+    with open("13.txt") as fp:
+        data = fp.read().strip().splitlines()
+    pmaps = []
+    rot_pmaps = []
+    pmap_tmp = []
+    for line in data:
+        if not line:
+            pmaps.append(pmap_tmp)
+            pmap_tmp = []
+        else:
+            pmap_tmp.append([e for e in line])
+    pmaps.append(pmap_tmp)
+    for pm in pmaps:
+        #rot_pmaps.append(list(map(list, numpy.rot90(pm, k=3))))
+        rot_pmaps.append([list(x) for x in zip(*pm)])
+    total = 0
+    for pm in range(len(pmaps)):
+        for row in range(len(pmaps[pm])):
+            for col in range(len(pmaps[pm][row])):
+                tpm = deepcopy(pmaps[pm])
+                if tpm[row][col] == '.':
+                    tpm[row][col] = '#'
+                else:
+                    tpm[row][col] = '.'
+                for i in range(len(tpm)-1):
+                    if tpm[i] == tpm[i+1]:
+                        if (i + 1) * 2 - 1 < row:
+                            continue
+                        for j in range(i+1):
+                            if i + j + 1 >= len(tpm):
+                                if i - j >= row:
+                                    break
+                                continue
+                            elif tpm[i-j] != tpm[i+j+1]:
+                                break
+                        else:
+                            total += 100 * (i + 1)
+                            break
+                else:
+                    continue
+                break
+            else:
+                continue
+            break
+        else:
+            for row in range(len(rot_pmaps[pm])):
+                for col in range(len(rot_pmaps[pm][row])):
+                    tpm = deepcopy(rot_pmaps[pm])
+                    if tpm[row][col] == '.':
+                        tpm[row][col] = '#'
+                    else:
+                        tpm[row][col] = '.'
+                    for i in range(len(tpm)-1):
+                        if tpm[i] == tpm[i+1]:
+                            if (i + 1) * 2 - 1 < row:
+                                continue
+                            for j in range(i+1):
+                                if i + j + 1 >= len(tpm):
+                                    if i - j >= row:
+                                        break
+                                    continue
+                                elif tpm[i-j] != tpm[i+j+1]:
+                                    break
+                            else:
+                                total += i + 1
+                                break
+                    else:
+                        continue
+                    break
+                else:
+                    continue
+                break
+    return total
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -795,6 +912,8 @@ def main():
     print(f"Puzzle 11, part 1: {puzzle_11_1()}")
     print(f"Puzzle 11, part 2: {puzzle_11_2()}")
     print(f"Puzzle 12, part 1: {puzzle_12_1()}")
+    print(f"Puzzle 13, part 1: {puzzle_13_1()}")
+    print(f"Puzzle 13, part 2: {puzzle_13_2()}")
 
 if __name__ == '__main__':
     main()

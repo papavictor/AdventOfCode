@@ -747,10 +747,8 @@ def puzzle_12_1():
     for line in data:
         order, counts = line.split(" ")
         counts = list(map(int, counts.split(",")))
-        #print(order, counts)
         qcount = order.count("?")
         arrangements = list(itertools.product("#.", repeat=qcount))
-        #print(len(arrangements))
         for a in arrangements:
             new_o = order
             new_ol = list(new_o)
@@ -762,7 +760,6 @@ def puzzle_12_1():
             new_o = "".join(new_ol).split(".")
             while '' in new_o:
                 new_o.remove('')
-            #print(new_o)
             if len(new_o) != len(counts):
                 continue
             for c in range(len(counts)):
@@ -786,7 +783,6 @@ def puzzle_13_1():
             pmap_tmp.append([e for e in line])
     pmaps.append(pmap_tmp)
     for pm in pmaps:
-        #rot_pmaps.append(list(map(list, numpy.rot90(pm, k=3))))
         rot_pmaps.append([list(x) for x in zip(*pm)])
     total = 0
     for pm in range(len(pmaps)):
@@ -827,7 +823,6 @@ def puzzle_13_2():
             pmap_tmp.append([e for e in line])
     pmaps.append(pmap_tmp)
     for pm in pmaps:
-        #rot_pmaps.append(list(map(list, numpy.rot90(pm, k=3))))
         rot_pmaps.append([list(x) for x in zip(*pm)])
     total = 0
     for pm in range(len(pmaps)):

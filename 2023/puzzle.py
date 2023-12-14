@@ -883,6 +883,88 @@ def puzzle_13_2():
                 break
     return total
 
+def puzzle_14_1():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    platform = []
+    for line in range(len(data)):
+        platform.append([c for c in data[line]])
+    moved = True
+    while moved:
+        moved = False
+        for i in range(len(platform)-1):
+            row = platform[i+1]
+            for c in range(len(row)):
+                if row[c] == 'O' and platform[i][c] == '.':
+                    platform[i][c] = 'O'
+                    platform[i+1][c] = '.'
+                    moved = True
+    count = 0
+    for i in range(len(platform)):
+        count += platform[i].count("O") * (len(platform) - i)
+    return count
+
+def puzzle_14_2():
+    with open("14.txt") as fp:
+        data = fp.read().strip().splitlines()
+    platform = []
+    for line in range(len(data)):
+        platform.append([c for c in data[line]])
+    seen_platforms = []
+    total_cycles = 1000000000
+    for i in range(total_cycles):
+        moved = True
+        while moved:
+            moved = False
+            for i2 in range(len(platform)-1):
+                for j in range(len(platform[i2])):
+                    if platform[i2+1][j] == 'O' and platform[i2][j] == '.':
+                        platform[i2][j] = 'O'
+                        platform[i2+1][j] = '.'
+                        moved = True
+        moved = True
+        while moved:
+            moved = False
+            for i2 in range(len(platform)):
+                for j in range(len(platform[i2])-1):
+                    if platform[i2][j+1] == 'O' and platform[i2][j] == '.':
+                        platform[i2][j] = 'O'
+                        platform[i2][j+1] = '.'
+                        moved = True
+        moved = True
+        while moved:
+            moved = False
+            for i2 in range(len(platform)-1):
+                for j in range(len(platform[i2])):
+                    if platform[i2][j] == 'O' and platform[i2+1][j] == '.':
+                        platform[i2][j] = '.'
+                        platform[i2+1][j] = 'O'
+                        moved = True
+        moved = True
+        while moved:
+            moved = False
+            for i2 in range(len(platform)):
+                for j in range(len(platform[i2])-1):
+                    if platform[i2][j] == 'O' and platform[i2][j+1] == '.':
+                        platform[i2][j] = '.'
+                        platform[i2][j+1] = 'O'
+                        moved = True
+        if str(platform) in seen_platforms:
+            base = seen_platforms.index(str(platform))
+            diff = i - base
+            tot = int((total_cycles - base)/ diff)
+            index = base + (total_cycles - (tot * diff + base))
+            plat_to_count = eval(seen_platforms[index-1])
+            break
+        seen_platforms.append(str(platform))
+        count = 0
+        for i3 in range(len(platform)):
+            count += platform[i3].count("O") * (len(platform) - i3)
+    count = 0
+    for i3 in range(len(plat_to_count)):
+        count += plat_to_count[i3].count("O") * (len(plat_to_count) - i3)
+    return count
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -909,6 +991,8 @@ def main():
     print(f"Puzzle 12, part 1: {puzzle_12_1()}")
     print(f"Puzzle 13, part 1: {puzzle_13_1()}")
     print(f"Puzzle 13, part 2: {puzzle_13_2()}")
+    print(f"Puzzle 14, part 1: {puzzle_14_1()}")
+    print(f"Puzzle 14, part 2: {puzzle_14_2()}")
 
 if __name__ == '__main__':
     main()

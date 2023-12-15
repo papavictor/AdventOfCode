@@ -965,6 +965,57 @@ def puzzle_14_2():
         count += plat_to_count[i3].count("O") * (len(plat_to_count) - i3)
     return count
 
+def puzzle_15_1():
+    with open("15.txt") as fp:
+        data = fp.read().strip().split(",")
+    sum_val = 0
+    for instr in data:
+        cur_val = 0
+        for char in instr:
+            asc = ord(char)
+            cur_val += asc
+            cur_val *= 17
+            cur_val %= 256
+        sum_val += cur_val
+    return sum_val
+
+def puzzle_15_2():
+    with open("15.txt") as fp:
+        data = fp.read().strip().split(",")
+    boxes = [[] for e in range(256)]
+    for instr in data:
+        cur_val = 0
+        (label, op, foc_len) = re.match("([a-z]+)([-=])([0-9]*)", instr).groups()
+        for char in label:
+            asc = ord(char)
+            cur_val += asc
+            cur_val *= 17
+            cur_val %= 256
+        index = -1
+        rinstr = ""
+        iinstr = 0
+        for box in range(len(boxes)):
+            if boxes[box]:
+                for b in range(len(boxes[box])):
+                    if boxes[box][b].startswith(f"{label} "):
+                        index = box
+                        iinstr = b
+                        rinstr = boxes[box][b]
+        if op == '-':
+            if index >= 0:
+                boxes[index].remove(rinstr)
+        elif op == '=':
+            if index >= 0:
+                boxes[index][iinstr] = f"{label} {foc_len}"
+            else:
+                boxes[cur_val].append(f"{label} {foc_len}")
+    total = 0
+    for box in range(len(boxes)):
+        for b in range(len(boxes[box])):
+            foc_pow = (1 + box) * (1+b) * int(boxes[box][b].split()[1])
+            total += foc_pow
+    return total
+
 def main():
     print(f"Puzzle 1, part 1: {puzzle_1_1()}")
     print(f"Puzzle 1, part 2: {puzzle_1_2()}")
@@ -993,6 +1044,8 @@ def main():
     print(f"Puzzle 13, part 2: {puzzle_13_2()}")
     print(f"Puzzle 14, part 1: {puzzle_14_1()}")
     print(f"Puzzle 14, part 2: {puzzle_14_2()}")
+    print(f"Puzzle 15, part 1: {puzzle_15_1()}")
+    print(f"Puzzle 15, part 2: {puzzle_15_2()}")
 
 if __name__ == '__main__':
     main()
